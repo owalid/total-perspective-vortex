@@ -32,6 +32,7 @@ import argparse as ap
 
 
 from utils import load_data
+from decomposition.TurboCSP import TurboCSP
 
 MODELS_LIST = [
     ('gradient_boosting', GradientBoostingClassifier(n_estimators=100)),
@@ -45,6 +46,15 @@ MODELS_LIST = [
 ]
 MODEL_NAMES = [name for name, _ in MODELS_LIST]
 MODEL_NAMES_STR = ','.join(MODEL_NAMES)
+
+
+
+DECOMPOSITION_ALGORITHMS = [
+    ('TurboCSP', TurboCSP(n_components=4)),
+    ('MNE_CSP', mne.decoding.CSP(n_components=4))
+]
+DECOMPOSITION_ALGORITHMS_NAMES = [name for name, _ in DECOMPOSITION_ALGORITHMS]
+DECOMPOSITION_ALGORITHMS_NAMES_STR = ','.join(DECOMPOSITION_ALGORITHMS_NAMES)
 
 EXPERIMENT_AVAILABLES = range(1, 15)
 SUBJECT_AVAILABLES = range(1, 110)
@@ -62,7 +72,11 @@ def check_args(args):
     output = args.output
     verbose = args.verbose
     no_save_model = args.no_save_model
+    decomp_alg = args.decomposition_algorithm
 
+    if decomp_alg not in DECOMPOSITION_ALGORITHMS_NAMES:
+        raise ValueError(f'Decomposition algorithm not valid. Availables algorithms: {DECOMPOSITION_ALGORITHMS_NAMES_STR}')
+    
     if model_name not in MODEL_NAMES:
         raise ValueError(f'Model name not valid. Availables models: {MODEL_NAMES_STR}')
     
@@ -77,11 +91,16 @@ def check_args(args):
     except IndexError:
         raise ValueError(f'Model name not valid. Availables models: {MODEL_NAMES_STR}')
     
+    try:
+        choosed_decomp_alg = [alg for name, alg in DECOMPOSITION_ALGORITHMS if name == decomp_alg][0]
+    except IndexError:
+        raise ValueError(f'Decomposition algorithm not valid. Availables algorithms: {DECOMPOSITION_ALGORITHMS_NAMES_STR}')
+    
     dir_output = os.path.dirname(output)
     if not os.path.exists(dir_output) and dir_output != '':
         raise ValueError(f'Output directory path not valid: {output}')
     
-    return model_name, choosed_model, subject, experiment, output, verbose, no_save_model
+    return model_name, choosed_model, decomp_alg, choosed_decomp_alg, subject, experiment, output, verbose, no_save_model
 
 def get_epochs(raw):
     event_id = {'T1': 1, 'T2': 2}
@@ -106,14 +125,16 @@ if __name__ == "__main__":
     parser.add_argument('-e', '--experiment', type=int, help='Experiment number', required=True)
     parser.add_argument('-m', '--model', type=str, help=f'Model name.\nAvailables models: {MODEL_NAMES_STR}', required=False, default='lda')
     parser.add_argument('-o', '--output', type=str, help='Output path file', required=False, default='output_model/model.joblib')
+    parser.add_argument('-da', '--decomposition-algorithm', type=str, help=f'Decomposition algorithm.\nAvailable: {DECOMPOSITION_ALGORITHMS_NAMES_STR}', required=False, default='TurboCSP')
     parser.add_argument('-nsmdl', '--no-save-model', action='store_true', help='Save model', default=False)
     parser.add_argument('-v', '--verbose', action='store_true', help='Verbose', default=False)
     args = parser.parse_args()
 
-    model_name, choosed_model, subject, experiment, output, VERBOSE, no_save_model = check_args(args)
+    model_name, choosed_model, decomp_alg, choosed_decomp_alg, subject, experiment, output, VERBOSE, no_save_model = check_args(args)
     
     
     local_print(f'Using model: {model_name}')
+    local_print(f'Using decomposition algorithm: {decomp_alg}')
     local_print(f'Using subject: {subject}')
     local_print(f'Using experiment: {experiment}')
     local_print(f'Using output: {output}')
@@ -127,7 +148,7 @@ if __name__ == "__main__":
 
     shuffle_split = ShuffleSplit(n_splits=7, test_size=0.2, random_state=42)
     pipeline = Pipeline([
-        ('csp', mne.decoding.CSP(n_components=4)),
+        (f'decomposition {decomp_alg}', choosed_decomp_alg),
         (f'clf {model_name}', choosed_model)
     ], verbose=VERBOSE)
     scores = cross_validate(pipeline, X, y, cv=shuffle_split, n_jobs=1, return_estimator=True, verbose=VERBOSE)

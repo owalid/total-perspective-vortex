@@ -26,7 +26,6 @@ def preprocess_data(raw_obj):
     n_components = 10
     ica = ICA(n_components=n_components, random_state=97, max_iter=800)
     ica.fit(original_raw)
-    ica.plot_components()
     components_to_excludes, scores = ica.find_bads_eog(original_raw, ch_name='Fpz')
     if components_to_excludes is not None and len(components_to_excludes) > 0:
         ica.exclude = components_to_excludes
@@ -34,7 +33,7 @@ def preprocess_data(raw_obj):
     else:
         print("No components to exclude")
 
-    event_id = {'left_hand': 1, 'right_hand': 2}
+    event_id = {'action_hand': 1, 'action_feet': 2}
     events, event_dict = mne.events_from_annotations(original_raw, event_id=event_id)
     tmin = -0.5  # Time before event in seconds
     tmax = 4.  # Time after event in seconds
