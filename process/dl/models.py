@@ -1,5 +1,5 @@
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Dropout, Flatten, BatchNormalization, Conv2D, AveragePooling2D, Activation
+from tensorflow.keras.layers import MaxPool2D, Dense, Dropout, Flatten, BatchNormalization, Conv2D, AveragePooling2D, Activation
 
 def cnn2d_classic(input_shape, n_channels):
     
@@ -28,6 +28,48 @@ def cnn2d_classic(input_shape, n_channels):
     # Classifier
     model.add(Dense(4, activation='softmax'))
     return model
+
+
+def cnn2d_model(input_shape, n_channels, input_window_size):
+    model = Sequential()
+
+    model.add(Conv2D(25, (15, 1), strides=(1, 1), padding='valid', activation='elu', input_shape=input_shape))
+    #conv_pool_block_1
+    model.add(Conv2D(filters=25, kernel_size=(15,1),dilation_rate=(2, 1),strides=(1, 1), padding='valid', activation='elu', input_shape=(input_window_size,n_channels,1)))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.3))
+
+    model.add(Conv2D(filters=25, kernel_size=(1,n_channels),strides=(1, 1), padding='valid', activation='elu'))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.3))
+    model.add(MaxPool2D(pool_size=(3,1)))
+
+    #conv_pool_block_2
+    model.add(Conv2D(filters=50, kernel_size=(10,1),strides=(1, 1), padding='valid', activation='elu'))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.3))
+    model.add(MaxPool2D(pool_size=(3,1)))
+
+    #conv_pool_block_3
+    model.add(Conv2D(filters=100, kernel_size=(10,1),strides=(1, 1), padding='valid', activation='elu'))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.3))
+    model.add(MaxPool2D(pool_size=(3,1)))
+
+    #conv_pool_block_4
+    model.add(Conv2D(filters=200, kernel_size=(10,1),strides=(1, 1), padding='valid', activation='elu'))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.3))
+    model.add(MaxPool2D(pool_size=(3,1)))
+
+    #classification Layer
+    model.add(Flatten())
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
+    model.add(Dense(1, activation='sigmoid'))
+
+    # Take a look at the model summary
+    model.summary()
 
 
 def gcn_classic(input_shape, n_channels):

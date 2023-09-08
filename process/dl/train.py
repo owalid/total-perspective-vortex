@@ -92,6 +92,8 @@ def check_args(args):
 if __name__ == "__main__":
     parser = ap.ArgumentParser(formatter_class=ap.RawTextHelpFormatter)
     parser.add_argument('-ns', '--nums-subjects', type=int, help='Numbers of subjects', required=True)
+    # todo this:
+    # parser.add_argument('-t', '--type-training', type=str, help='Type training, all events, ', required=True, choices=['motor', 'imagery'])
     parser.add_argument('-r', '--ratio', type=float, help='Ratio of train/test', required=True)
     parser.add_argument('-e', '--epochs', type=int, help='Epochs', default=250, required=False)
     parser.add_argument('-bs', '--batch-size', type=int, help='Batch size', default=10, required=False)
