@@ -4,6 +4,12 @@ import numpy as np
 from mne.preprocessing import ICA
 
 def preprocess_data(raw_obj):
+    '''
+        Preprocesses the raw data. Apply notch filter, bandpass filter, standardize, apply ICA, and epoch the data.
+        :param raw_obj: raw data object from MNE (mne.io.Raw)
+        :return: raw_obj, events, event_dict, picks, epochs
+    '''
+
     original_raw = raw_obj.copy()
 
     # filters
