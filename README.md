@@ -12,25 +12,61 @@ In this project, we utilize various decomposition algorithms to preprocess the E
 
 Common Spatial Patterns (CSP) algorithm is employed to extract discriminative spatial patterns from EEG data, enhancing the classification of different states.
 
+The goal of the CSP algorithm is to find spatial filters that maximize the variance of one class of signals while minimizing the variance of another class. This is achieved by finding a transformation matrix that, when applied to the raw EEG signals, results in new signals (features) that have the highest variance for one class and the lowest variance for the other.
+
 ### ICA (Independent Component Analysis)
 
-Independent Component Analysis (ICA) is used to separate EEG signals into statistically independent components, aiding in the identification of distinct patterns related to different states.
+Independent Component Analysis (ICA) is a statistical and computational technique used to separate a multivariate signal into its constituent independent subcomponents. It's particularly useful when the observed signals are a linear mixture of various independent sources, making it a powerful tool in signal processing, neuroscience, image processing, and other fields.
 
-# Usage
 
-To utilize this project, follow these steps:
+# Usage and notebooks
 
-1. Install the required dependencies mentioned in the project documentation.
-2. Execute the preprocessing, decomposition, and training components as per the provided instructions.
+## Notebooks
+
+Notebooks are located in the `/notebooks` folder. They are used to preprocess the data and train the models and lot of analysis. There are following directories:
+
+```
+/notebooks <-- At the root of this project we can find the notebooks used to present the mandatory part of the project
+  /decompositiion_alg <-- In this directory we can find the notebooks used to present the decomposition algorithms
+  /research <-- In this directory we can find the notebooks used to present the research to ameliorate the results of the mandatory part, there is also the deep learning part
+  /other_dataset <-- In this directory we can find the notebooks used to present the results with other dataset
+```
+
+## Scripts process
+
+The scripts are located in the `/process` folder. They are used to preprocess the data and train the models.
+There are following directories:
+
+```
+/process
+  /dl <-- In this directory we can find the scripts used to train and predict the deep learning models
+  /ml <-- In this directory we can find the scripts used to train and predict the machine learning models
+```
+
+There is usage of the scripts:
+
+- ML
+```
+```
+
+- DL
+```
+```
 
 # Results
 
 ## Mandatory part
 
-The mandatory aspect of the project involves utilizing the decomposition algorithms to classify states. The following table summarizes the results:
+The mandatory aspect of the project involves utilizing the decomposition algorithms to classify states.
 
-With filter 
-CSP + ICA:
+The preprocessing steps are as follows:
+
+- Apply a bandpass filter to the raw EEG data
+- Apply a notch filter to remove powerline noise
+- Apply a decomposition algorithm ICA to extract independent components
+- Add pipeline with CSP -> <model> to classify the states
+
+The following table summarizes the results of the three best models:
 
 | Model                              | Accuracy |
 |------------------------------------|---------|
@@ -39,14 +75,13 @@ CSP + ICA:
 | K-nearest neighbors (KNN)           | 0.70    |
 
 
-
 ## Bonus part
 
-In the bonus part, we explored additional methods involving machine learning and deep learning techniques.
+In the bonus part, I explored additional methods involving machine learning and deep learning techniques and feature extraction methods to further enhance the classification accuracy.
 
 ### Deep learning
 
-Deep learning models, including convolutional neural networks (CNNs) and recurrent neural networks (RNNs), were trained to further enhance classification accuracy. The following table summarizes the deep learning results:
+Deep learning models, including convolutional neural networks (CNNs) and recurrent neural networks (RNNs) like long short-term memory (LSTM), were trained on preprocessed EEG data. The following table summarizes the deep learning results:
 
 | Model | Accuracy |
 |-------|----------|
@@ -54,9 +89,11 @@ Deep learning models, including convolutional neural networks (CNNs) and recurre
 | CNN   | 0.2392   |
 | LSTM  | 0.2392   |
 
+There is not a really good results with the deep learning models. We have try to train with the MNIST Brain Digits dataset and we have better results. You can see the results in the section "Working with other dataset".
+
 ### Machine learning
 
-We trained various machine learning models, such as SVM and Random Forest, on preprocessed EEG data. The following table summarizes the machine learning results:
+We trained various machine learning models, such as SVM and Random Forest, on preprocessed EEG data.
 
 We have use the following features for the machine learning models:
 
@@ -68,6 +105,9 @@ We have use the following features for the machine learning models:
 - Energy
 - Discrete Wavelet Transform
 - Power Spectral Density
+
+
+The following table summarizes the machine learning results:
 
 | Model                              | Accuracy |
 |------------------------------------|----------|
@@ -86,6 +126,8 @@ With mne-feature we have use the following features for the machine learning mod
 - zero_crossings
 - spect_slope
 
+The following table summarizes the machine learning results:
+
 | Model                              | Accuracy |
 |------------------------------------|----------|
 | Linear discriminant analysis (LDA) | 0.50     |
@@ -93,14 +135,18 @@ With mne-feature we have use the following features for the machine learning mod
 | KNN                                | 0.42     |
 
 
-Based on this [paper](https://arxiv.org/ftp/arxiv/papers/1312/1312.2877.pdf) we have extract the following features:
+Based on this [paper](https://arxiv.org/ftp/arxiv/papers/1312/1312.2877.pdf) I have try to improve the results of the classification of the mandatory part.
 
-3 epochs:
-- from -2 to 0 with filter from 8 to 30
-- from 4.1 to 5.1 with filter from 8 to 30
-- from -2 to 0 with filter all to 3
+The principle is to extract 3 types of epochs:
 
-After that we have extract the following features from the ICA of each 3 epochs:
+- **ERD** from -2 to 0 
+- **ERS** from 4.1 to 5.1
+- **MRCP** from -2 to 0
+
+For ERD and ERS I used a filter to extract the frequency between 8 and 30 Hz. For MRCP I used a filter to extract the frequency under 3 Hz.
+
+After that for each epochs I have apply the ICA algorithm to extract the independent components.
+From this independent components I have able to calculate the `activation_vector`. From this vector I have extract the following features:
 
 - mean
 - std
@@ -115,12 +161,11 @@ After that we have extract the following features from the ICA of each 3 epochs:
 | MLP           | 0.54     |
 
 
-
 # Working with other dataset
 
 ### MNIST Brain Digits
 
-We have try to train with the MNIST Brain Digits dataset. We have try to train to predict the exact digit and to predict the digit class (0-9).
+I have try to train with the MNIST Brain Digits dataset. I have try to predict the digit class (0-9).
 
 | Model         | Accuracy |
 |---------------|----------|
@@ -131,7 +176,7 @@ We have try to train with the MNIST Brain Digits dataset. We have try to train t
 | KKN           | 0.19     |
 
 
-If digits is digits or even or odd:
+When I see the bad results I have try to predict if the digit is even, odd or a digit.
 
 | Model             | Accuracy |
 |-------------------|----------|
@@ -143,7 +188,7 @@ If digits is digits or even or odd:
 | Decision Tree     | 0.45     |
 | LDA               | 0.38     |
 
-With the bad results we have try to predict if the digit is a digit or not.
+And after that I have try to predict if the digit is a digit or not.
 
 | Model             | Accuracy |
 |-------------------|----------|
@@ -156,6 +201,8 @@ With the bad results we have try to predict if the digit is a digit or not.
 | LDA               | 0.76     |
 | MLP               | 0.70     |
 
+
+I have also try to used the deep learning for this dataset but I have not good results.
 
 # Annexes
 
