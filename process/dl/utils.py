@@ -6,7 +6,7 @@ import glob
 EXPERIMENTS = {
     'hands_vs_feet': {
         'experiments': [3, 7, 11],
-        'events': {'T1': 1, 'T2': 2}
+        'events': {'T3': 1, 'T4': 2}
     },
     'left_vs_right': {
         'experiments': [5, 9, 13],
@@ -35,7 +35,7 @@ def load_one_subject(current_raws, subject_num, directory_dataset, type_training
         current_raws.append(r)
     return current_raws
 
-def preprocess_raw(raw, event_id, type_training):
+def preprocess_raw(raw, type_training):
     # filters
     notch_freq = 60
     raw.notch_filter(notch_freq, fir_design='firwin')

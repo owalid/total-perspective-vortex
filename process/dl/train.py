@@ -5,6 +5,7 @@ import argparse as ap
 from tensorflow.keras.utils import to_categorical
 import mne
 from mne.io import concatenate_raws, read_raw_edf
+from tensorflow.keras.utils import normalize
 
 from models import cnn2d_classic, gcn_classic, cnn2d_advanced
 from utils import preprocess_raw, load_one_subject
@@ -42,15 +43,34 @@ def get_train_test_data(nums_subjects, directory_dataset, ratio, type_training):
     return raw_train, raw_test
 
 
-def get_X_y(epochs_train, epochs_test):
+def get_X_y(epochs_train, epochs_test, model_name):
     X_train = epochs_train.get_data()
     y_train = epochs_train.events[:, -1] - 2
+    n_classes = len(np.unique(y_train))
+    n_classes = 1 if n_classes == 2 else n_classes
     y_train = to_categorical(y_train)
 
     X_test = epochs_test.get_data()
     y_test = epochs_test.events[:, -1] - 2
     y_test = to_categorical(y_test)
-    return X_train, y_train, X_test, y_test
+
+    _, n_channels, input_window_size = X_train.shape
+
+    if model_name == 'cnn2d_advanced':
+        input_shape = (input_window_size, n_channels, 1)
+        X_train = X_train.transpose(0,2,1)
+        X_train = X_train.reshape(X_train.shape[0], input_window_size, n_channels, 1)
+        X_train = normalize(X_train, axis=1, order=0)
+
+        X_test = X_test.transpose(0,2,1)
+        X_test = X_test.reshape(X_test.shape[0], input_window_size, n_channels, 1)
+        X_test = normalize(X_test, axis=1, order=0)
+    else:
+        input_shape = (1, n_channels, input_window_size)
+        X_train = X_train.reshape(X_train.shape[0], 1, n_channels, input_window_size)
+        X_test = X_test.reshape(X_test.shape[0], 1, n_channels, input_window_size)
+
+    return X_train, y_train, X_test, y_test, input_shape, n_channels, input_window_size, n_classes
 
 
 
@@ -116,16 +136,8 @@ if __name__ == "__main__":
     raw_train, events_train, event_dict_train, picks_train, epochs_train = preprocess_raw(raw_train, type_training)
     raw_test, events_test, event_dict_test, picks_test, epochs_test = preprocess_raw(raw_test, type_training)
 
-    X_train, y_train, X_test, y_test = get_X_y(epochs_train, epochs_test)
-
-    # Add all this inside a function of models.py
-    n_channels = X_train.shape[1]
-    input_window_size = X_train.shape[2]
-    input_shape = (1, n_channels, input_window_size)
-    X_train = X_train.reshape(X_train.shape[0], 1, n_channels, input_window_size)
-    X_test = X_test.reshape(X_test.shape[0], 1, n_channels, input_window_size)
-    n_classes = np.unique(y_train).shape[0]
-
+    X_train, y_train, X_test, y_test, input_shape, n_channels, input_window_size, n_classes = get_X_y(epochs_train, epochs_test, model_name)
+    
     model = model(input_shape, n_channels, input_window_size, n_classes)
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, validation_data=(X_test, y_test),  shuffle=False, verbose=1 if VERBOSE else 0)

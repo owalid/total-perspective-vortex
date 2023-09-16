@@ -26,7 +26,10 @@ def cnn2d_classic(input_shape, n_channels, input_window_size, n_classes):
     model.add(Flatten())
 
     # Classifier
-    model.add(Dense(n_classes, activation='softmax'))
+    if n_classes == 1:
+        model.add(Dense(n_classes, activation='sigmoid'))
+    else:
+        model.add(Dense(n_classes, activation='softmax'))
     return model
 
 
@@ -66,7 +69,11 @@ def cnn2d_advanced(input_shape, n_channels, input_window_size, n_classes):
     model.add(Flatten())
     model.add(BatchNormalization())
     model.add(Dropout(0.5))
-    model.add(Dense(n_classes, activation='sigmoid'))
+
+    if n_classes == 1:
+        model.add(Dense(n_classes, activation='sigmoid'))
+    else:
+        model.add(Dense(n_classes, activation='softmax'))
 
     return model
 
@@ -101,7 +108,10 @@ def gcn_classic(input_shape, n_channels, input_window_size, n_classes):
     model.add(Dropout(0.5))
     model.add(Flatten())
     
-    model.add(Dense(n_classes, activation='softmax'))
+    if n_classes == 1:
+        model.add(Dense(n_classes, activation='sigmoid'))
+    else:
+        model.add(Dense(n_classes, activation='softmax'))
 
     return model
 
