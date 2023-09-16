@@ -1,7 +1,7 @@
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import MaxPool2D, Dense, Dropout, Flatten, BatchNormalization, Conv2D, AveragePooling2D, Activation
 
-def cnn2d_classic(input_shape, n_channels):
+def cnn2d_classic(input_shape, n_channels, input_window_size, n_classes):
     
     model = Sequential()
     # Block 1: Temporal Convolution
@@ -26,11 +26,11 @@ def cnn2d_classic(input_shape, n_channels):
     model.add(Flatten())
 
     # Classifier
-    model.add(Dense(4, activation='softmax'))
+    model.add(Dense(n_classes, activation='softmax'))
     return model
 
 
-def cnn2d_model(input_shape, n_channels, input_window_size):
+def cnn2d_advanced(input_shape, n_channels, input_window_size, n_classes):
     model = Sequential()
 
     model.add(Conv2D(25, (15, 1), strides=(1, 1), padding='valid', activation='elu', input_shape=input_shape))
@@ -66,13 +66,12 @@ def cnn2d_model(input_shape, n_channels, input_window_size):
     model.add(Flatten())
     model.add(BatchNormalization())
     model.add(Dropout(0.5))
-    model.add(Dense(1, activation='sigmoid'))
+    model.add(Dense(n_classes, activation='sigmoid'))
 
-    # Take a look at the model summary
-    model.summary()
+    return model
 
 
-def gcn_classic(input_shape, n_channels):
+def gcn_classic(input_shape, n_channels, input_window_size, n_classes):
     model = Sequential()
     model.add(Conv2D(8, (1, n_channels), strides=(1, 1), padding='same', use_bias=False, input_shape=input_shape))
     model.add(BatchNormalization(momentum=0.01, epsilon=1e-3))
@@ -102,7 +101,7 @@ def gcn_classic(input_shape, n_channels):
     model.add(Dropout(0.5))
     model.add(Flatten())
     
-    model.add(Dense(4, activation='softmax'))
+    model.add(Dense(n_classes, activation='softmax'))
 
     return model
 
