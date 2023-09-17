@@ -6,7 +6,7 @@ import glob
 EXPERIMENTS = {
     'hands_vs_feet': {
         'experiments': [3, 7, 11],
-        'events': {'T3': 1, 'T4': 2}
+        'events': {'T1': 1, 'T2': 2}
     },
     'left_vs_right': {
         'experiments': [5, 9, 13],
@@ -25,13 +25,14 @@ def load_one_subject(current_raws, subject_num, directory_dataset, type_training
     for i in EXPERIMENTS[type_training]['experiments']:
         current_file = files[i]
         r = read_raw_edf(current_file, preload=True, stim_channel='auto')
-        events, _ = mne.events_from_annotations(r)
-        if i in [5, 9, 13]:
-            new_labels_events = {1:'rest', 2:'T1', 3:'T2'} # action
-        elif i in [3, 7, 11]:
-            new_labels_events = {1:'rest', 2:'T3', 3:'T4'}
-        new_annot = mne.annotations_from_events(events=events, event_desc=new_labels_events, sfreq=r.info['sfreq'], orig_time=r.info['meas_date'])
-        r.set_annotations(new_annot)
+        if type_training == 'all':
+            events, _ = mne.events_from_annotations(r)
+            if i in [5, 9, 13]:
+                new_labels_events = {1:'rest', 2:'T1', 3:'T2'} # action
+            elif i in [3, 7, 11]:
+                new_labels_events = {1:'rest', 2:'T3', 3:'T4'}
+            new_annot = mne.annotations_from_events(events=events, event_desc=new_labels_events, sfreq=r.info['sfreq'], orig_time=r.info['meas_date'])
+            r.set_annotations(new_annot)
         current_raws.append(r)
     return current_raws
 
@@ -49,8 +50,8 @@ def preprocess_raw(raw, type_training):
 
     event_id = EXPERIMENTS[type_training]['events']
     events, event_dict = mne.events_from_annotations(raw, event_id=event_id)
-    tmin = -0.2  # Time before event in seconds
-    tmax = 0.8  # Time after event in seconds
+    tmin = -0.5  # Time before event in seconds
+    tmax = 4.5  # Time after event in seconds
     epochs = mne.Epochs(raw, events, event_dict, tmin, tmax, proj=True, picks=picks, baseline=None, preload=True)
 
     return raw, events, event_dict, picks, epochs

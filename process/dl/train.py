@@ -1,11 +1,8 @@
 import os
 import numpy as np
-import glob
 import argparse as ap
-from tensorflow.keras.utils import to_categorical
-import mne
-from mne.io import concatenate_raws, read_raw_edf
-from tensorflow.keras.utils import normalize
+from tensorflow.keras.utils import to_categorical, normalize
+from mne.io import concatenate_raws
 
 from models import cnn2d_classic, gcn_classic, cnn2d_advanced
 from utils import preprocess_raw, load_one_subject
@@ -68,7 +65,9 @@ def get_X_y(epochs_train, epochs_test, model_name):
     else:
         input_shape = (1, n_channels, input_window_size)
         X_train = X_train.reshape(X_train.shape[0], 1, n_channels, input_window_size)
+        X_train = normalize(X_train, axis=1, order=0)
         X_test = X_test.reshape(X_test.shape[0], 1, n_channels, input_window_size)
+        X_test = normalize(X_test, axis=1, order=0)
 
     return X_train, y_train, X_test, y_test, input_shape, n_channels, input_window_size, n_classes
 
@@ -137,9 +136,10 @@ if __name__ == "__main__":
     raw_test, events_test, event_dict_test, picks_test, epochs_test = preprocess_raw(raw_test, type_training)
 
     X_train, y_train, X_test, y_test, input_shape, n_channels, input_window_size, n_classes = get_X_y(epochs_train, epochs_test, model_name)
-    
+
     model = model(input_shape, n_channels, input_window_size, n_classes)
-    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    loss = 'binary_crossentropy' if n_classes == 1 else 'categorical_crossentropy'
+    model.compile(loss=loss, optimizer='adam', metrics=['accuracy'])
     model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, validation_data=(X_test, y_test),  shuffle=False, verbose=1 if VERBOSE else 0)
     loss, accuracy = model.evaluate(X_train, y_train, verbose=1 if VERBOSE else 0)
 

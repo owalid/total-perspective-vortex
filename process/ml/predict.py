@@ -50,8 +50,6 @@ def check_args(args):
         raise ValueError(f'Model path not exists: {model_path}')
     
     choosed_model = joblib.load(model_path)
-    # print(choosed_model)
-    # exit(0)
 
     return choosed_model, subject, experiment, VERBOSE
 
