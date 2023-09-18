@@ -66,6 +66,11 @@ def get_epochs(raw):
 
 if __name__ == "__main__":
     parser = ap.ArgumentParser(formatter_class=ap.RawTextHelpFormatter)
+
+    # TODO ADD THIS
+    # parser.add_argument('-o', '--output-file', type=str, help='Output file', required=False, default='results.json')
+    # parser.add_argument('-s', '--subject', type=str, help='Subject number, sequence of subjects (separated by comma) or all', required=True)
+
     parser.add_argument('-s', '--subject', type=int, help='Subject number', required=True)
     parser.add_argument('-e', '--experiment', type=int, help='Experiment number', required=True)
     parser.add_argument('-m', '--model-path', type=str, help=f'Model path', required=False, default='./output_model/model.joblib')
