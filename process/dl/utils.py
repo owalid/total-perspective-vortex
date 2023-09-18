@@ -2,6 +2,11 @@ import mne
 from mne.io import read_raw_edf
 import glob
 
+SUBJECT_AVAILABLES = range(1, 110)
+SUBJECT_AVAILABLES = list(SUBJECT_AVAILABLES)
+SUBJECT_AVAILABLES.remove(88)
+SUBJECT_AVAILABLES.remove(92)
+SUBJECT_AVAILABLES.remove(100)
 
 EXPERIMENTS = {
     'hands_vs_feet': {
@@ -10,6 +15,14 @@ EXPERIMENTS = {
     },
     'left_vs_right': {
         'experiments': [5, 9, 13],
+        'events': {'T1': 1, 'T2': 2}
+    },
+    'imagery_left_vs_right': {
+        'experiments': [4, 8, 12],
+        'events': {'T1': 1, 'T2': 2}
+    },
+    'imagery_hands_vs_feet': {
+        'experiments': [6, 10, 14],
         'events': {'T1': 1, 'T2': 2}
     },
     'all': {

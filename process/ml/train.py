@@ -31,8 +31,11 @@ from sklearn.model_selection import cross_validate
 import argparse as ap
 
 
-from utils import load_data
+from utils import load_data, SUBJECT_AVAILABLES
 from decomposition.TurboCSP import TurboCSP
+
+
+CHOICE_TRAINING = ['hands_vs_feet', 'left_vs_right', 'imagery_left_vs_right', 'imagery_hands_vs_feet']
 
 MODELS_LIST = [
     ('gradient_boosting', GradientBoostingClassifier(n_estimators=100)),
@@ -48,7 +51,6 @@ MODEL_NAMES = [name for name, _ in MODELS_LIST]
 MODEL_NAMES_STR = ','.join(MODEL_NAMES)
 
 
-
 DECOMPOSITION_ALGORITHMS = [
     ('TurboCSP', TurboCSP(n_components=4)),
     ('MNE_CSP', mne.decoding.CSP(n_components=4))
@@ -57,7 +59,6 @@ DECOMPOSITION_ALGORITHMS_NAMES = [name for name, _ in DECOMPOSITION_ALGORITHMS]
 DECOMPOSITION_ALGORITHMS_NAMES_STR = ','.join(DECOMPOSITION_ALGORITHMS_NAMES)
 
 EXPERIMENT_AVAILABLES = range(1, 15)
-SUBJECT_AVAILABLES = range(1, 110)
 
 VERBOSE = False
 
@@ -68,7 +69,7 @@ def local_print(msg):
 def check_args(args):
     model_name = args.model
     subject = int(args.subject)
-    experiment = int(args.experiment)
+    experiment = args.experiment
     output = args.output
     verbose = args.verbose
     no_save_model = args.no_save_model
@@ -83,8 +84,8 @@ def check_args(args):
     if subject not in SUBJECT_AVAILABLES:
         raise ValueError(f'Subject not valid. Availables subjects: {SUBJECT_AVAILABLES}')
     
-    if experiment not in EXPERIMENT_AVAILABLES:
-        raise ValueError(f'Experiment not valid. Availables experiments: {EXPERIMENT_AVAILABLES}')
+    if experiment not in CHOICE_TRAINING:
+        raise ValueError(f'Experiment not valid. Availables experiments: {CHOICE_TRAINING}')
     
     try:
         choosed_model = [model for name, model in MODELS_LIST if name == model_name][0]
@@ -122,7 +123,7 @@ def get_X_y(epochs):
 if __name__ == "__main__":
     parser = ap.ArgumentParser(formatter_class=ap.RawTextHelpFormatter)
     parser.add_argument('-s', '--subject', type=int, help='Subject number', required=True)
-    parser.add_argument('-e', '--experiment', type=int, help='Experiment number', required=True)
+    parser.add_argument('-e', '--experiements', type=str, help='Type training', required=False, choices=CHOICE_TRAINING, default='hands_vs_feet')
     parser.add_argument('-m', '--model', type=str, help=f'Model name.\nAvailables models: {MODEL_NAMES_STR}', required=False, default='lda')
     parser.add_argument('-o', '--output', type=str, help='Output path file', required=False, default='output_model/model.joblib')
     parser.add_argument('-da', '--decomposition-algorithm', type=str, help=f'Decomposition algorithm.\nAvailable: {DECOMPOSITION_ALGORITHMS_NAMES_STR}', required=False, default='TurboCSP')
@@ -132,7 +133,6 @@ if __name__ == "__main__":
 
     model_name, choosed_model, decomp_alg, choosed_decomp_alg, subject, experiment, output, VERBOSE, no_save_model = check_args(args)
     
-    
     local_print(f'Using model: {model_name}')
     local_print(f'Using decomposition algorithm: {decomp_alg}')
     local_print(f'Using subject: {subject}')
@@ -140,7 +140,6 @@ if __name__ == "__main__":
     local_print(f'Using output: {output}')
     local_print(f'Using verbose: {VERBOSE}')
     local_print("\n")
-    
     
     raw = load_data(subject, experiment, VERBOSE)
     epochs, event_dict, raw = get_epochs(raw)
@@ -159,7 +158,6 @@ if __name__ == "__main__":
     local_print(f"Raw: {score}")
     local_print(f"Accuracy: {np.mean(score)} (+/- {np.std(score)})")
 
-    # pipeline = pipeline.fit(X, y)
     # save model
     if no_save_model:
         exit(1)

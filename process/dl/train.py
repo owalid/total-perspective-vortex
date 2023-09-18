@@ -5,10 +5,10 @@ from tensorflow.keras.utils import to_categorical, normalize
 from mne.io import concatenate_raws
 
 from models import cnn2d_classic, gcn_classic, cnn2d_advanced
-from utils import preprocess_raw, load_one_subject
+from utils import preprocess_raw, load_one_subject, SUBJECT_AVAILABLES
 
 
-CHOICE_TRAINING = ['all', 'hands_vs_feet', 'left_vs_right']
+CHOICE_TRAINING = ['all', 'hands_vs_feet', 'left_vs_right', 'hands_vs_feet', 'left_vs_right']
 
 MODEL_LIST = [
     ('cnn2d_classic', cnn2d_classic),
@@ -25,7 +25,9 @@ def get_train_test_data(nums_subjects, directory_dataset, ratio, type_training):
     if VERBOSE:
         print(f'Loading data...')
     
-    for ii in range(1, nums_subjects+1):
+    # get nums_subjects first inside SUBJECT_AVAILABLES array
+    nums_subjects_elms = SUBJECT_AVAILABLES[:nums_subjects]
+    for ii in nums_subjects_elms:
         if ii <= nums_subjects*ratio:
             raws_train = load_one_subject(raws_train, ii, directory_dataset, type_training)
         else:
@@ -40,15 +42,16 @@ def get_train_test_data(nums_subjects, directory_dataset, ratio, type_training):
     return raw_train, raw_test
 
 
-def get_X_y(epochs_train, epochs_test, model_name):
+def get_X_y(epochs_train, epochs_test, model_name, type_training):
+    min_one = 2 if type_training == 'all' else 1
     X_train = epochs_train.get_data()
-    y_train = epochs_train.events[:, -1] - 2
+    y_train = epochs_train.events[:, -1] - min_one
     n_classes = len(np.unique(y_train))
-    n_classes = 1 if n_classes == 2 else n_classes
+    # n_classes = 1 if n_classes == 2 else n_classes
     y_train = to_categorical(y_train)
 
     X_test = epochs_test.get_data()
-    y_test = epochs_test.events[:, -1] - 2
+    y_test = epochs_test.events[:, -1] - min_one
     y_test = to_categorical(y_test)
 
     _, n_channels, input_window_size = X_train.shape
@@ -135,7 +138,7 @@ if __name__ == "__main__":
     raw_train, events_train, event_dict_train, picks_train, epochs_train = preprocess_raw(raw_train, type_training)
     raw_test, events_test, event_dict_test, picks_test, epochs_test = preprocess_raw(raw_test, type_training)
 
-    X_train, y_train, X_test, y_test, input_shape, n_channels, input_window_size, n_classes = get_X_y(epochs_train, epochs_test, model_name)
+    X_train, y_train, X_test, y_test, input_shape, n_channels, input_window_size, n_classes = get_X_y(epochs_train, epochs_test, model_name, type_training)
 
     model = model(input_shape, n_channels, input_window_size, n_classes)
     loss = 'binary_crossentropy' if n_classes == 1 else 'categorical_crossentropy'

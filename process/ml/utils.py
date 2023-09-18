@@ -2,6 +2,21 @@ import mne
 from mne.io import concatenate_raws, read_raw_edf
 import glob
 
+SUBJECT_AVAILABLES = range(1, 110)
+SUBJECT_AVAILABLES = list(SUBJECT_AVAILABLES)
+SUBJECT_AVAILABLES.remove(88)
+SUBJECT_AVAILABLES.remove(92)
+SUBJECT_AVAILABLES.remove(100)
+
+
+EXPERIMENTS = {
+    'hands_vs_feet': [3, 7, 11],
+    'left_vs_right': [5, 9, 13],
+    'imagery_left_vs_right': [4, 8, 12],
+    'imagery_hands_vs_feet': [6, 10, 14],
+}
+
+
 def load_data(subject, experiment, VERBOSE=False):
     '''
     =========  ===================================
@@ -15,23 +30,16 @@ def load_data(subject, experiment, VERBOSE=False):
     6, 10, 14  Motor imagery: hands vs feet
     =========  ===================================
     '''
-    experiments = [
-        [1],
-        [2],
-        [3, 7, 11],
-        [4, 8, 12],
-        [5, 9, 13],
-        [6, 10, 14]
-    ]
     subject = f'S{subject:03d}'
-    
-    current_experiment = [e for i, e in enumerate(experiments) if experiment in e][0]
+
     files = glob.glob(f'./files/{subject}/*.edf')
     raws = []
-    for i in current_experiment:
+
+    for i in EXPERIMENTS[experiment]:
         current_file = files[i-1]
         r = read_raw_edf(current_file, preload=True, stim_channel='auto', verbose=VERBOSE)
         raws.append(r)
+
     raw = concatenate_raws(raws)
     raw = filter_data(raw, VERBOSE)
     return raw

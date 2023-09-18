@@ -30,11 +30,10 @@ from mne_realtime import LSLClient, MockLSLStream
 import argparse as ap
 from colorama import *
 
-from utils import load_data
+from utils import load_data, SUBJECT_AVAILABLES
 
 VERBOSE = False
 EXPERIMENT_AVAILABLES = range(1, 15)
-SUBJECT_AVAILABLES = range(1, 110)
 
 def check_args(args):
     subject = int(args.subject)
