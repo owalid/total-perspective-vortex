@@ -24,7 +24,7 @@ def plot_from_json_data(data):
     check_data(data)
 
     # sort data by accuracy
-    data = sorted(data, key=lambda d: d['accuracy'], reverse=True)
+    data = sorted(data, key=lambda d: d['subject'], reverse=True)
 
     subjects = [d['subject'] for d in data] 
     accuracies = [d['accuracy'] for d in data]  

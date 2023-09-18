@@ -8,7 +8,7 @@ from models import cnn2d_classic, gcn_classic, cnn2d_advanced
 from utils import preprocess_raw, load_one_subject, SUBJECT_AVAILABLES
 
 
-CHOICE_TRAINING = ['all', 'hands_vs_feet', 'left_vs_right', 'hands_vs_feet', 'left_vs_right']
+CHOICE_TRAINING = ['all', 'hands_vs_feet', 'left_vs_right', 'imagery_hands_vs_feet', 'imagery_left_vs_right']
 
 MODEL_LIST = [
     ('cnn2d_classic', cnn2d_classic),

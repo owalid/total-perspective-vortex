@@ -17,7 +17,7 @@ EXPERIMENTS = {
 }
 
 
-def load_data(subject, experiment, VERBOSE=False):
+def load_data(subject, experiment, directory_dataset, VERBOSE=False):
     '''
     =========  ===================================
     run        task
@@ -32,7 +32,7 @@ def load_data(subject, experiment, VERBOSE=False):
     '''
     subject = f'S{subject:03d}'
 
-    files = glob.glob(f'./files/{subject}/*.edf')
+    files = glob.glob(f'{directory_dataset}/{subject}/*.edf')
     raws = []
 
     for i in EXPERIMENTS[experiment]:
