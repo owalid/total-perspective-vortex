@@ -4,6 +4,7 @@ import sys
 import random
 import joblib
 import numpy as np
+import time
 
 import socket
 import mne
@@ -118,7 +119,7 @@ def process_with_stream(pipeline, s, experiment, results):
                 break
         if end:
             break
-
+        time_start = time.time()
         data_b64 = final_data.decode('ascii')
         data_decoded = base64.b64decode(data_b64)
         data = json.loads(data_decoded)
@@ -134,27 +135,34 @@ def process_with_stream(pipeline, s, experiment, results):
         predict_correct = y_pred[0] == label
         good_prediction += 1 if predict_correct else 0
         color = Fore.GREEN if predict_correct else Fore.RED
-        print(f'Epoch {predictions:<5} {y_pred[0]:<3} {label:<3} {color}{Style.BRIGHT}[{predict_correct}]{Style.RESET_ALL}')
+        time_end = time.time()
+        delta_time = time_end - time_start
+        delta_time = f'{delta_time:.2f}'
+        predict_correct = f"[{predict_correct}]"
+        print(f'Epoch {predictions:<5} {y_pred[0]:<10} {label:<5} {color}{Style.BRIGHT}{predict_correct:<8}{Style.RESET_ALL} {delta_time:<5}s')
     results.append({'subject': s, 'accuracy': good_prediction/predictions})
     print(f'Accuracy: {good_prediction/predictions*100}')
     print('Stream closed')
     return results
 
 def process_without_stream(pipeline, s, experiment, directory_dataset, results):
-    print(f"[+] Subject: S{s:03d}")
     raw = load_data(s, experiment, directory_dataset, VERBOSE=VERBOSE)
     epochs, event_dict, raw = get_epochs(raw)
 
+    time_start = time.time()
     X = epochs.get_data()
     y = epochs.events[:, -1] - 1
     y_pred = pipeline.predict(X)
 
     predict_correct = y_pred == y
     good_prediction = np.sum(predict_correct)
-    print("Epochs [prediction] [real] [correct]")
+    time_end = time.time()
+    delta_time = time_end - time_start
+    delta_time = f'{delta_time:.2f}'
     for ii in range(X.shape[0]):
         color = Fore.GREEN if predict_correct[ii] else Fore.RED
-        print(f'Epoch {ii:<5} {y_pred[ii]:<10} {y[ii]:<5} {color}{Style.BRIGHT}[{predict_correct[ii]}]{Style.RESET_ALL}')
+        current_predi = f"[{predict_correct[ii]}]"
+        print(f'Epoch {ii:<5} {y_pred[ii]:<10} {y[ii]:<5} {color}{Style.BRIGHT}{current_predi:<8}{Style.RESET_ALL} {delta_time:<5}s')
     print(f'Accuracy: {good_prediction/X.shape[0]*100}%')
     results.append({'subject': s, 'accuracy': good_prediction/X.shape[0]})
     print(good_prediction/X.shape[0]*100)
@@ -179,6 +187,8 @@ if __name__ == "__main__":
     
     results = []
     for s in subject:
+        print(f"[+] Subject: S{s:03d}")
+        print("Epochs [prediction] [real] [correct] [time]")
         if stream_mode:
             results = process_with_stream(pipeline, s, experiment, results)
         else:

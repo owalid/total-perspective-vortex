@@ -111,8 +111,7 @@ class SocketServer:
                 epochs_label = epochs.events[:, -1] - 1
                 sfreq = raw.info['sfreq']
 
-                for ii in range(3):
-                # for ii in range(len(epochs_label)):
+                for ii in range(len(epochs_label)):
                     current_data = epochs_data[ii]
                     current_label = epochs_label[ii]
                     to_send = {
@@ -121,9 +120,7 @@ class SocketServer:
                         'sfreq': sfreq
                     }
                     to_send = json.dumps(to_send)
-                    # print(to_send.encode('ascii'))
-                    # encode as base64
-                    base64_bytes = base64.b64encode(to_send.encode('ascii'))
+                    base64_bytes = base64.b64encode(to_send.encode('ascii')) # encode as base64
         
                     send_message(conn, base64_bytes + b'\x00\x00\x00\x00')
                     print(f"[+] epoch {ii+1} sent to client {laddr}")
