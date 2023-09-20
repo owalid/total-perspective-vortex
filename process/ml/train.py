@@ -1,5 +1,6 @@
 
 import os
+import json
 import sys
 import random
 import joblib
@@ -52,8 +53,8 @@ MODEL_NAMES_STR = ','.join(MODEL_NAMES)
 
 
 DECOMPOSITION_ALGORITHMS = [
-    ('TurboCSP', TurboCSP(n_components=10)),
-    ('MNE_CSP', mne.decoding.CSP(n_components=10))
+    ('TurboCSP', TurboCSP(n_components=5)),
+    ('MNECSP', mne.decoding.CSP(n_components=5))
 ]
 DECOMPOSITION_ALGORITHMS_NAMES = [name for name, _ in DECOMPOSITION_ALGORITHMS]
 DECOMPOSITION_ALGORITHMS_NAMES_STR = ','.join(DECOMPOSITION_ALGORITHMS_NAMES)
@@ -66,13 +67,20 @@ def local_print(msg):
 
 def check_args(args):
     model_name = args.model
-    subject = int(args.subject)
+    subject = args.subject
     experiment = args.experiment
     output = args.output
     verbose = args.verbose
     no_save_model = args.no_save_model
     decomp_alg = args.decomposition_algorithm
     directory_dataset = args.directory_dataset
+
+    if subject == 'all':
+        subject = SUBJECT_AVAILABLES
+    elif ',' in subject:
+        subject = [int(s) for s in subject.split(',')]
+    else:
+        subject = [int(subject)]
 
     if not os.path.exists(directory_dataset):
         raise ValueError(f'Directory dataset not exists: {directory_dataset}')
@@ -86,9 +94,6 @@ def check_args(args):
     
     if model_name not in MODEL_NAMES:
         raise ValueError(f'Model name not valid. Availables models: {MODEL_NAMES_STR}')
-    
-    if subject not in SUBJECT_AVAILABLES:
-        raise ValueError(f'Subject not valid. Availables subjects: {SUBJECT_AVAILABLES}')
     
     if experiment not in CHOICE_TRAINING:
         raise ValueError(f'Experiment not valid. Availables experiments: {CHOICE_TRAINING}')
@@ -114,7 +119,7 @@ def get_epochs(raw):
     events, event_dict = mne.events_from_annotations(raw, event_id=event_id, verbose=VERBOSE)
 
     tmin = -0.5
-    tmax = 2
+    tmax = 1
     picks = mne.pick_types(raw.info, meg=True, eeg=True, stim=False, eog=False, exclude='bads')
     epochs = mne.Epochs(raw, events, event_dict, tmin, tmax, proj=True, picks=picks, baseline=None, preload=True, verbose=VERBOSE)
 
@@ -129,7 +134,7 @@ def get_X_y(epochs):
 if __name__ == "__main__":
     parser = ap.ArgumentParser(formatter_class=ap.RawTextHelpFormatter)
 
-    parser.add_argument('-s', '--subject', type=int, help='Subject number', required=True)
+    parser.add_argument('-s', '--subject', type=str, help='Subject number, sequence of subjects (separated by comma) or all', required=True)
     parser.add_argument('-e', '--experiment', type=str, help='Type training', required=False, choices=CHOICE_TRAINING, default='hands_vs_feet')
     parser.add_argument('-d', '--directory-dataset', type=str, help='Directory dataset', required=False, default='../../files')
     parser.add_argument('-m', '--model', type=str, help=f'Model name.\nAvailables models: {MODEL_NAMES_STR}', required=False, default='lda')
@@ -143,32 +148,45 @@ if __name__ == "__main__":
     
     local_print(f'Using model: {model_name}')
     local_print(f'Using decomposition algorithm: {decomp_alg}')
-    local_print(f'Using subject: {subject}')
+    local_print(f'Using number of subject: {len(subject)}')
     local_print(f'Using experiment: {experiment}')
     local_print(f'Using output: {output}')
     local_print(f'Using verbose: {VERBOSE}')
     local_print("\n")
     
-    raw = load_data(subject, experiment, directory_dataset, VERBOSE)
-    epochs, event_dict, raw = get_epochs(raw)
-    X, y = get_X_y(epochs)
+    subject_len = len(subject)
+    need_calculate_mean = subject_len > 1
+    results = []
+    for s in subject:
+        raw = load_data(s, experiment, directory_dataset, VERBOSE)
+        epochs, event_dict, raw = get_epochs(raw)
+        X, y = get_X_y(epochs)
 
-    scaler = mne.decoding.Scaler(epochs.info) # Standardize channel data.
+        scaler = mne.decoding.Scaler(epochs.info) # Standardize channel data.
 
-    shuffle_split = ShuffleSplit(n_splits=5, test_size=0.2, random_state=42)
-    pipeline = Pipeline([
-        (f'scaler', scaler),
-        (f'decomposition {decomp_alg}', choosed_decomp_alg),
-        (f'clf {model_name}', choosed_model)
-    ], verbose=VERBOSE)
-    if VERBOSE:
-        scores = cross_validate(pipeline, X, y, cv=shuffle_split, n_jobs=1, return_estimator=True, verbose=VERBOSE)
-        
-        score = scores['test_score']
-        local_print("\n")
-        local_print("Cross validation scores:")
-        local_print(f"Raw: {score}")
-        local_print(f"Accuracy: {np.mean(score)} (+/- {np.std(score)})")
+        shuffle_split = ShuffleSplit(n_splits=10, test_size=0.2, random_state=42)
+        pipeline = Pipeline([
+            (f'scaler', scaler),
+            (f'decomposition {decomp_alg}', choosed_decomp_alg),
+            (f'clf {model_name}', choosed_model)
+        ], verbose=VERBOSE)
+        if need_calculate_mean or VERBOSE:
+            scores = cross_validate(pipeline, X, y, cv=shuffle_split, n_jobs=1, return_estimator=True, verbose=VERBOSE)
+            
+            score = scores['test_score']
+            results.append(np.mean(score))
+            local_print("\n")
+            local_print("Cross validation scores:")
+            local_print(f"Raw: {score}")
+            local_print(f"Accuracy: {np.mean(score)} (+/- {np.std(score)})")
+
+    if need_calculate_mean:
+        print("\n")
+        print("Cross validation scores:")
+        print(f"Accuracy: {np.mean(results)} (+/- {np.std(results)})")
+
+    with open("test.json", 'w') as f:
+        json.dump(results, f)
 
     # save model
     if no_save_model:

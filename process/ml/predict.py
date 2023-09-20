@@ -1,9 +1,11 @@
 import os
+import base64
 import sys
 import random
 import joblib
 import numpy as np
 
+import socket
 import mne
 from mne.io import concatenate_raws, read_raw_edf
 import matplotlib.pyplot as plt
@@ -44,6 +46,7 @@ def check_args(args):
     subject = args.subject
     directory_dataset = args.directory_dataset
     output_file = args.output_file
+    stream_mode = args.stream_mode
     VERBOSE = args.verbose
 
     if subject == 'all':
@@ -66,16 +69,17 @@ def check_args(args):
     if not os.path.exists(model_path):
         raise ValueError(f'Model path not exists: {model_path}')
     
-    if not os.path.exists(directory_dataset):
-        raise ValueError(f'Directory dataset not exists: {directory_dataset}')
-    if not os.path.isdir(directory_dataset):
-        raise ValueError(f'Directory dataset is not a directory: {directory_dataset}')
-    if directory_dataset[-1] == '/':
-        directory_dataset = directory_dataset[:-1]
+    if not stream_mode:
+        if not os.path.exists(directory_dataset):
+            raise ValueError(f'Directory dataset not exists: {directory_dataset}')
+        if not os.path.isdir(directory_dataset):
+            raise ValueError(f'Directory dataset is not a directory: {directory_dataset}')
+        if directory_dataset[-1] == '/':
+            directory_dataset = directory_dataset[:-1]
     
     pipeline = joblib.load(model_path)
 
-    return pipeline, subject, experiment, directory_dataset, output_file, VERBOSE
+    return pipeline, subject, experiment, directory_dataset, output_file, stream_mode, VERBOSE
 
 
 def get_epochs(raw):
@@ -89,9 +93,80 @@ def get_epochs(raw):
 
     return epochs, event_dict, raw
 
+
+def process_with_stream(pipeline, s, experiment, results):
+    address = ('localhost', 5000)
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client.connect(address)
+    client.sendall(f'{s}:{experiment}\n'.encode())
+    good_prediction = 0
+    predictions = 0
+    end = False
+    while not end:
+        # now i will receive the data of each raw epoch from the server as json
+        final_data = b''
+        if predictions > 0:
+            client.sendall(b'next')
+        while True:
+            l = client.recv(4096**2)
+            final_data += l
+            if final_data == b'end':
+                end = True
+                break
+            if l[-4:] == b'\x00\x00\x00\x00': # \x00\x00\x00\x00 is the end of the data
+                final_data = final_data[:-4]
+                break
+        if end:
+            break
+
+        data_b64 = final_data.decode('ascii')
+        data_decoded = base64.b64decode(data_b64)
+        data = json.loads(data_decoded)
+        epoch_data = np.array(data['epoch'])
+        label = data['label']
+        sfreq = data['sfreq']
+
+        predictions += 1
+        # now i will convert the data to a mne.RawArray
+        epoch_data = mne.filter.filter_data(epoch_data, sfreq=sfreq, l_freq=8, h_freq=30, verbose=False)
+        epoch_data = np.array([epoch_data])
+        y_pred = pipeline.predict(epoch_data)
+        predict_correct = y_pred[0] == label
+        good_prediction += 1 if predict_correct else 0
+        color = Fore.GREEN if predict_correct else Fore.RED
+        print(f'Epoch {predictions:<5} {y_pred[0]:<3} {label:<3} {color}{Style.BRIGHT}[{predict_correct}]{Style.RESET_ALL}')
+    results.append({'subject': s, 'accuracy': good_prediction/predictions})
+    print(f'Accuracy: {good_prediction/predictions*100}')
+    print('Stream closed')
+    return results
+
+def process_without_stream(pipeline, s, experiment, directory_dataset, results):
+    print(f"[+] Subject: S{s:03d}")
+    raw = load_data(s, experiment, directory_dataset, VERBOSE=VERBOSE)
+    epochs, event_dict, raw = get_epochs(raw)
+
+    X = epochs.get_data()
+    y = epochs.events[:, -1] - 1
+    y_pred = pipeline.predict(X)
+
+    predict_correct = y_pred == y
+    good_prediction = np.sum(predict_correct)
+    print("Epochs [prediction] [real] [correct]")
+    for ii in range(X.shape[0]):
+        color = Fore.GREEN if predict_correct[ii] else Fore.RED
+        print(f'Epoch {ii:<5} {y_pred[ii]:<10} {y[ii]:<5} {color}{Style.BRIGHT}[{predict_correct[ii]}]{Style.RESET_ALL}')
+    print(f'Accuracy: {good_prediction/X.shape[0]*100}%')
+    results.append({'subject': s, 'accuracy': good_prediction/X.shape[0]})
+    print(good_prediction/X.shape[0]*100)
+    print('')
+    return results
+
+
+
 if __name__ == "__main__":
     parser = ap.ArgumentParser(formatter_class=ap.RawTextHelpFormatter)
 
+    parser.add_argument('-strm', '--stream-mode', action='store_true', help='Stream mode, When this flag is enabled, the program will wait for the data from the server at port 5000.', default=False)
     parser.add_argument('-e', '--experiment', type=str, help='Type training', required=False, choices=CHOICE_TRAINING, default='hands_vs_feet')
     parser.add_argument('-o', '--output-file', type=str, help='Output file', required=False, default='results.json')
     parser.add_argument('-s', '--subject', type=str, help='Subject number, sequence of subjects (separated by comma) or all', required=True)
@@ -100,68 +175,14 @@ if __name__ == "__main__":
     parser.add_argument('-v', '--verbose', action='store_true', help='Verbose', default=False)
     args = parser.parse_args()
 
-    pipeline, subject, experiment, directory_dataset, output_file, VERBOSE = check_args(args)
-
+    pipeline, subject, experiment, directory_dataset, output_file, stream_mode, VERBOSE = check_args(args)
+    
     results = []
     for s in subject:
-        print(f"[+] Subject: S{s:03d}")
-        raw = load_data(s, experiment, directory_dataset, VERBOSE=VERBOSE)
-        epochs, event_dict, raw = get_epochs(raw)
-
-        X = epochs.get_data()
-        y = epochs.events[:, -1] - 1
-
-        y_pred = pipeline.predict(X)
-
-        # 
-        predict_correct = y_pred == y
-        good_prediction = np.sum(predict_correct)
-        print("Epochs [prediction] [real] [correct]")
-        for ii in range(X.shape[0]):
-            color = Fore.GREEN if predict_correct[ii] else Fore.RED
-            print(f'Epoch {ii:<5} {y_pred[ii]:<10} {y[ii]:<5} {color}{Style.BRIGHT}[{predict_correct[ii]}]{Style.RESET_ALL}')
-        print(f'Accuracy: {good_prediction/X.shape[0]*100}%')
-        results.append({'subject': s, 'accuracy': good_prediction/X.shape[0]})
-        print(good_prediction/X.shape[0]*100)
-        print('')
+        if stream_mode:
+            results = process_with_stream(pipeline, s, experiment, results)
+        else:
+            results = process_without_stream(pipeline, s, experiment, directory_dataset, results)
 
     with open(output_file, 'w') as f:
         json.dump(results, f)
-
-
-        # exit(0)
-        # good_prediction = 0
-        # print("Epochs [prediction] [real] [correct]")
-        # for ii in range(X.shape[0]):
-        #     X_ = X[ii:ii+1, :, :]
-        #     y_ = y[ii:ii+1]
-        #     y_pred = pipeline.predict(X)
-        #     print(y_pred)
-        #     exit(0)
-        #     predict_correct = y_pred[0] == y_[0]
-        #     good_prediction += 1 if predict_correct else 0 
-        #     color = Fore.GREEN if predict_correct else Fore.RED
-        #     print(f'Epoch {ii:<5} {y_pred[0]:<10} {y_[0]:<5} {color}{Style.BRIGHT}[{predict_correct}]{Style.RESET_ALL}')
-        # print(f'Accuracy: {good_prediction/X.shape[0]*100}%')
-        # results.append({'subject': s, 'accuracy': good_prediction/X.shape[0]})
-        # print('')
-        
-        # host = 'localhost'
-        # n_epochs = 200
-        # good_prediction = 0
-        # with MockLSLStream(host, raw, 'eeg'):
-        #     with LSLClient(info=raw.info, host=host, wait_max=5, buffer_size=1) as client:
-        #         print("Epochs: [prediction] [real] [correct]")
-        #         for ii in range(epochs.get_data().shape[0]):
-        #             client_info = client.get_measurement_info()
-        #             sfreq = int(client_info['sfreq'])
-        #             epoch = client.get_data_as_epoch(n_samples=sfreq)
-
-        #             X = epoch.get_data()
-        #             y = epoch.events[:, -1]
-        #             y_pred = choosed_model.predict(X)
-        #             predict_correct = y_pred[0] == y[0]
-        #             good_prediction += 1 if predict_correct else 0
-        #             print(f'Epoch {ii:<5} {y_pred[0]:<3} {y[0]:<3} [{predict_correct}]\n')
-        #         print(f'Accuracy: {good_prediction/n_epochs*100}%')
-        # print('Streams closed')

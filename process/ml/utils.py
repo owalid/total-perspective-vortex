@@ -51,7 +51,7 @@ def filter_data(raw, VERBOSE=False):
     raw.notch_filter(notch_freq, fir_design='firwin', verbose=VERBOSE)
 
     # band pass filter
-    raw.filter(8, 40, fir_design='firwin', skip_by_annotation='edge', verbose=VERBOSE)
+    raw.filter(8, 45, fir_design='firwin', skip_by_annotation='edge', verbose=VERBOSE)
 
     # ICA
     ica = mne.preprocessing.ICA(n_components=10, random_state=97, max_iter=800, verbose=VERBOSE)
