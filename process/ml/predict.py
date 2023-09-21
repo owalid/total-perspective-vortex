@@ -96,53 +96,58 @@ def get_epochs(raw):
 
 
 def process_with_stream(pipeline, s, experiment, results):
-    address = ('localhost', 5000)
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect(address)
-    client.sendall(f'{s}:{experiment}\n'.encode())
-    good_prediction = 0
-    predictions = 0
-    end = False
-    while not end:
-        # now i will receive the data of each raw epoch from the server as json
-        final_data = b''
-        if predictions > 0:
-            client.sendall(b'next')
-        while True:
-            l = client.recv(4096**2)
-            final_data += l
-            if final_data == b'end':
-                end = True
+    try:
+        address = ('localhost', 5000)
+        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client.connect(address)
+        client.sendall(f'{s}:{experiment}\n'.encode())
+        good_prediction = 0
+        predictions = 0
+        end = False
+        while not end:
+            # now i will receive the data of each raw epoch from the server as json
+            final_data = b''
+            if predictions > 0:
+                client.sendall(b'next')
+            while True:
+                l = client.recv(4096**2)
+                final_data += l
+                if final_data == b'end':
+                    end = True
+                    break
+                if l[-4:] == b'\x00\x00\x00\x00': # \x00\x00\x00\x00 is the end of the data
+                    final_data = final_data[:-4]
+                    break
+            if end:
                 break
-            if l[-4:] == b'\x00\x00\x00\x00': # \x00\x00\x00\x00 is the end of the data
-                final_data = final_data[:-4]
-                break
-        if end:
-            break
-        time_start = time.time()
-        data_b64 = final_data.decode('ascii')
-        data_decoded = base64.b64decode(data_b64)
-        data = json.loads(data_decoded)
-        epoch_data = np.array(data['epoch'])
-        label = data['label']
-        sfreq = data['sfreq']
+            time_start = time.time()
+            data_b64 = final_data.decode('ascii')
+            data_decoded = base64.b64decode(data_b64)
+            data = json.loads(data_decoded)
+            epoch_data = np.array(data['epoch'])
+            label = data['label']
+            sfreq = data['sfreq']
 
-        predictions += 1
-        # now i will convert the data to a mne.RawArray
-        epoch_data = mne.filter.filter_data(epoch_data, sfreq=sfreq, l_freq=8, h_freq=30, verbose=False)
-        epoch_data = np.array([epoch_data])
-        y_pred = pipeline.predict(epoch_data)
-        predict_correct = y_pred[0] == label
-        good_prediction += 1 if predict_correct else 0
-        color = Fore.GREEN if predict_correct else Fore.RED
-        time_end = time.time()
-        delta_time = time_end - time_start
-        delta_time = f'{delta_time:.2f}'
-        predict_correct = f"[{predict_correct}]"
-        print(f'Epoch {predictions:<5} {y_pred[0]:<10} {label:<5} {color}{Style.BRIGHT}{predict_correct:<8}{Style.RESET_ALL} {delta_time:<5}s')
-    results.append({'subject': s, 'accuracy': good_prediction/predictions})
-    print(f'Accuracy: {good_prediction/predictions*100}')
-    print('Stream closed')
+            predictions += 1
+            # now i will convert the data to a mne.RawArray
+            epoch_data = mne.filter.filter_data(epoch_data, sfreq=sfreq, l_freq=8, h_freq=30, verbose=False)
+            epoch_data = np.array([epoch_data])
+            y_pred = pipeline.predict(epoch_data)
+            predict_correct = y_pred[0] == label
+            good_prediction += 1 if predict_correct else 0
+            color = Fore.GREEN if predict_correct else Fore.RED
+            time_end = time.time()
+            delta_time = time_end - time_start
+            delta_time = f'{delta_time:.2f}'
+            predict_correct = f"[{predict_correct}]"
+            print(f'Epoch {predictions:<5} {y_pred[0]:<10} {label:<5} {color}{Style.BRIGHT}{predict_correct:<8}{Style.RESET_ALL} {delta_time:<5}s')
+        results.append({'subject': s, 'accuracy': good_prediction/predictions})
+        print(f'Accuracy: {good_prediction/predictions*100}')
+        print("\n")
+    except ConnectionRefusedError:
+        raise ValueError('Stream not available, please start the stream server.')
+    except Exception:
+        raise ValueError("Unexpected error: please make sure that the stream server is running and dataset are available.")
     return results
 
 def process_without_stream(pipeline, s, experiment, directory_dataset, results):
@@ -194,5 +199,8 @@ if __name__ == "__main__":
         else:
             results = process_without_stream(pipeline, s, experiment, directory_dataset, results)
 
+    # global accuracy
+    print("Global accuracy:")
+    print(f"Accuracy: {np.mean([r['accuracy'] for r in results])*100}%")
     with open(output_file, 'w') as f:
         json.dump(results, f)

@@ -14,7 +14,7 @@ import glob
 from sklearn.model_selection import cross_val_score
 from sklearn.pipeline import Pipeline
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
-from sklearn.model_selection import ShuffleSplit, cross_val_score
+from sklearn.model_selection import StratifiedKFold, cross_val_score
 from sklearn.ensemble import RandomForestClassifier
 
 
@@ -119,7 +119,7 @@ def get_epochs(raw):
     events, event_dict = mne.events_from_annotations(raw, event_id=event_id, verbose=VERBOSE)
 
     tmin = -0.5
-    tmax = 1
+    tmax = 4
     picks = mne.pick_types(raw.info, meg=True, eeg=True, stim=False, eog=False, exclude='bads')
     epochs = mne.Epochs(raw, events, event_dict, tmin, tmax, proj=True, picks=picks, baseline=None, preload=True, verbose=VERBOSE)
 
@@ -164,16 +164,18 @@ if __name__ == "__main__":
 
         scaler = mne.decoding.Scaler(epochs.info) # Standardize channel data.
 
-        shuffle_split = ShuffleSplit(n_splits=10, test_size=0.2, random_state=42)
+        # shuffle_split = ShuffleSplit(n_splits=3, test_size=0.2, random_state=42)
+        shuffle_split = StratifiedKFold(n_splits=3, shuffle=False)
         pipeline = Pipeline([
             (f'scaler', scaler),
             (f'decomposition {decomp_alg}', choosed_decomp_alg),
             (f'clf {model_name}', choosed_model)
         ], verbose=VERBOSE)
         if need_calculate_mean or VERBOSE:
-            scores = cross_validate(pipeline, X, y, cv=shuffle_split, n_jobs=1, return_estimator=True, verbose=VERBOSE)
+            score = cross_val_score(pipeline, X, y, cv=shuffle_split, n_jobs=1, verbose=VERBOSE)
+            # scores = cross_validate(pipeline, X, y, cv=shuffle_split, n_jobs=1, return_estimator=True, verbose=VERBOSE)
             
-            score = scores['test_score']
+            # score = scores['test_score']
             results.append(np.mean(score))
             local_print("\n")
             local_print("Cross validation scores:")
@@ -191,6 +193,6 @@ if __name__ == "__main__":
     # save model
     if no_save_model:
         exit(1)
-    # joblib.dump(scores['estimator'][0], output)
+
     pipeline = pipeline.fit(X, y)
     joblib.dump(pipeline, output)
