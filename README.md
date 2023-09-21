@@ -26,7 +26,7 @@ Independent Component Analysis (ICA) is a statistical and computational techniqu
 Notebooks are located in the `/notebooks` folder. They are used to preprocess the data and train the models and lot of analysis. There are following directories:
 
 ```
-/notebooks <-- Notebooks used to present the mandatory part and bonus part
+/notebooks <-- At the root of the folder there are the notebooks used to present the mandatory part
   /decomposition_alg <-- Notebooks used to present the decomposition algorithms
   /research <-- Notebooks used to present the research to improve the results of the mandatory part, there is also the deep learning part
   /other_dataset <-- Notebooks used to present the results with MNIST Brain Digits dataset
