@@ -45,28 +45,124 @@ There are following directories:
 
 There is usage of the scripts:
 
-- ML
+### Machine learning
 
+**Train script:**
 ```
+python train.py -h
+usage: train.py [-h] -s SUBJECT [-e {hands_vs_feet,left_vs_right,imagery_left_vs_right,imagery_hands_vs_feet}]
+                [-d DIRECTORY_DATASET] [-m MODEL] [-o OUTPUT] [-da DECOMPOSITION_ALGORITHM] [-nsmdl] [-v]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s SUBJECT, --subject SUBJECT
+                        Subject number, sequence of subjects (separated by comma) or all
+  -e {hands_vs_feet,left_vs_right,imagery_left_vs_right,imagery_hands_vs_feet}, --experiment {hands_vs_feet,left_vs_right,imagery_left_vs_right,imagery_hands_vs_feet}
+                        Type training
+  -d DIRECTORY_DATASET, --directory-dataset DIRECTORY_DATASET
+                        Directory dataset
+  -m MODEL, --model MODEL
+                        Model name.
+                        Availables models: gradient_boosting,lda,svc,knn,random_forest,mlp,decision_tree,xgb
+  -o OUTPUT, --output OUTPUT
+                        Output path file
+  -da DECOMPOSITION_ALGORITHM, --decomposition-algorithm DECOMPOSITION_ALGORITHM
+                        Decomposition algorithm.
+                        Available: TurboCSP,MNECSP
+  -nsmdl, --no-save-model
+                        Save model
+  -v, --verbose         Verbose                                                                                          ~5s 
+```
+
+**Prediction script:**
+```
+python predict.py -h
+usage: predict.py [-h] [-strm] [-e {all,hands_vs_feet,left_vs_right,hands_vs_feet,left_vs_right}] [-o OUTPUT_FILE] -s
+                  SUBJECT [-m MODEL_PATH] [-d DIRECTORY_DATASET] [-v]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -strm, --stream-mode  Stream mode, When this flag is enabled, the program will wait for the data from the server at port 5000.
+  -e {all,hands_vs_feet,left_vs_right,hands_vs_feet,left_vs_right}, --experiment {all,hands_vs_feet,left_vs_right,hands_vs_feet,left_vs_right}
+                        Type training
+  -o OUTPUT_FILE, --output-file OUTPUT_FILE
+                        Output file
+  -s SUBJECT, --subject SUBJECT
+                        Subject number, sequence of subjects (separated by comma) or all
+  -m MODEL_PATH, --model-path MODEL_PATH
+                        Model path
+  -d DIRECTORY_DATASET, --directory-dataset DIRECTORY_DATASET
+                        Directory dataset
+  -v, --verbose         Verbose 
 ```
 
 You can also use ml prediction with stream server. The stream server is located in the `/process/ml/stream/main.py` file. There is an example of usage with prediction script:
 
-Stream server:
+**Stream server:**
 
 ```bash-session
 cd process/ml/stream
 python main.py -d ../../files
 ```
 
+**Run prediction script:**
 ```bash-session
 cd process/ml
 python predict.py -strm -s 1,2
 ```
 
-- DL
+### Deep learning
+
+**Train script:**
+```
+python train.py -h
+usage: train.py [-h] -ns NUMS_SUBJECTS [-t {all,hands_vs_feet,left_vs_right,imagery_hands_vs_feet,imagery_left_vs_right}]
+                -r RATIO [-e EPOCHS] [-bs BATCH_SIZE] [-d DIRECTORY_DATASET] [-m MODEL] [-o OUTPUT] [-nsmdl] [-v]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -ns NUMS_SUBJECTS, --nums-subjects NUMS_SUBJECTS
+                        Numbers of subjects
+  -t {all,hands_vs_feet,left_vs_right,imagery_hands_vs_feet,imagery_left_vs_right}, --type-training {all,hands_vs_feet,left_vs_right,imagery_hands_vs_feet,imagery_left_vs_right}
+                        Type training
+  -r RATIO, --ratio RATIO
+                        Ratio of train/test
+  -e EPOCHS, --epochs EPOCHS
+                        Epochs
+  -bs BATCH_SIZE, --batch-size BATCH_SIZE
+                        Batch size
+  -d DIRECTORY_DATASET, --directory-dataset DIRECTORY_DATASET
+                        Directory dataset
+  -m MODEL, --model MODEL
+                        Model name.
+                        Availables models: cnn2d_classic, gcn_classic, cnn2d_advanced
+  -o OUTPUT, --output OUTPUT
+                        Output path file
+  -nsmdl, --no-save-model
+                        Save model
+  -v, --verbose         Verbose 
+```
+
+**Prediction script:**
 
 ```
+python predict.py -h
+usage: predict.py [-h] [-t {all,hands_vs_feet,left_vs_right,hands_vs_feet,left_vs_right}] [-o OUTPUT_FILE] -s SUBJECT
+                  [-m MODEL_PATH] [-d DIRECTORY_DATASET] [-v]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -t {all,hands_vs_feet,left_vs_right,hands_vs_feet,left_vs_right}, --type-training {all,hands_vs_feet,left_vs_right,hands_vs_feet,left_vs_right}
+                        Type training
+  -o OUTPUT_FILE, --output-file OUTPUT_FILE
+                        Output file
+  -s SUBJECT, --subject SUBJECT
+                        Subject number, sequence of subjects (separated by comma) or all
+  -m MODEL_PATH, --model-path MODEL_PATH
+                        Model path
+  -d DIRECTORY_DATASET, --directory-dataset DIRECTORY_DATASET
+                        Directory dataset
+  -v, --verbose         Verbose
 ```
 
 # Results
