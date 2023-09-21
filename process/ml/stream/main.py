@@ -7,5 +7,8 @@ if __name__ == "__main__":
     parser.add_argument('-d', '--directory-dataset', type=str, help='Directory dataset', required=False, default='../../files')
 
     args = parser.parse_args()
-
-    SocketServer(args.directory_dataset).start_server()
+    try:
+        SocketServer(args.directory_dataset).start_server()
+    except KeyboardInterrupt:
+        print('\nServer closed\nBye!')
+        exit(0)

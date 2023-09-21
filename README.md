@@ -50,6 +50,20 @@ There is usage of the scripts:
 ```
 ```
 
+You can also use ml prediction with stream server. The stream server is located in the `/process/ml/stream/main.py` file. There is an example of usage with prediction script:
+
+Stream server:
+
+```bash-session
+cd process/ml/stream
+python main.py -d ../../files
+```
+
+```bash-session
+cd process/ml
+python predict.py -strm -s 1,2
+```
+
 - DL
 
 ```

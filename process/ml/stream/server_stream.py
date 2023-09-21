@@ -124,7 +124,7 @@ class SocketServer:
         
                     send_message(conn, base64_bytes + b'\x00\x00\x00\x00')
                     print(f"[+] epoch {ii+1} sent to client {laddr}")
-                    time.sleep(2)
+                    time.sleep(2.5)
                     is_ready = False
                     while not is_ready:
                         input_client = receive_message(conn, SIZE_OF_RECEIVE)
@@ -140,6 +140,9 @@ class SocketServer:
 
     def start_server(self):
         try:
+            print("[+] Server started")
+            print(f"[+] Listening for connections on 0.0.0.0:{PORT}")
+            print("[+] Waiting for client request..")
             while True:
                 conn, _ = self.server_socket.accept()
                 print(f'New connection: {conn}')
