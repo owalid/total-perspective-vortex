@@ -1,4 +1,5 @@
 import mne
+from mne.datasets import eegbci
 from mne.io import concatenate_raws, read_raw_edf
 import glob
 
@@ -51,10 +52,20 @@ def filter_data(raw, VERBOSE=False):
     raw.notch_filter(notch_freq, fir_design='firwin', verbose=VERBOSE)
 
     # band pass filter
-    raw.filter(8, 45, fir_design='firwin', skip_by_annotation='edge', verbose=VERBOSE)
+    raw.filter(8, 40, fir_design='firwin', verbose=VERBOSE)
 
-    # ICA
-    ica = mne.preprocessing.ICA(n_components=10, random_state=97, max_iter=800, verbose=VERBOSE)
-    ica.fit(raw, verbose=VERBOSE)
+    # eegbci.standardize(raw)
+    # montage = mne.channels.make_standard_montage('standard_1005')
+    # raw.set_montage(montage)
+
+    # # ICA
+    # ica = mne.preprocessing.ICA(n_components=5, random_state=97, max_iter=800, verbose=VERBOSE)
+    # ica.fit(raw, verbose=VERBOSE)
+
+    # components_to_excludes, _ = ica.find_bads_eog(raw, ch_name='Fpz')
+
+    # if components_to_excludes is not None and len(components_to_excludes) > 0:
+    #     ica.exclude = components_to_excludes
+    #     raw = ica.apply(raw)
 
     return raw

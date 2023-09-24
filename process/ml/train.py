@@ -36,11 +36,11 @@ from utils import load_data, SUBJECT_AVAILABLES
 from decomposition.TurboCSP import TurboCSP
 
 
-CHOICE_TRAINING = ['hands_vs_feet', 'left_vs_right', 'imagery_left_vs_right', 'imagery_hands_vs_feet']
+CHOICE_TRAINING = ['hands_vs_feet', 'left_vs_right', 'imagery_left_vs_right', 'imagery_hands_vs_feet', 'all']
 
 MODELS_LIST = [
     ('gradient_boosting', GradientBoostingClassifier(n_estimators=100)),
-    ('lda', LinearDiscriminantAnalysis(solver='svd')),
+    ('lda', LinearDiscriminantAnalysis(solver='svd', tol=0.0001)),
     ('svc', SVC(C=1, kernel='linear')),
     ('knn', KNeighborsClassifier(n_neighbors=4)),
     ('random_forest', RandomForestClassifier()),
@@ -98,6 +98,11 @@ def check_args(args):
     if experiment not in CHOICE_TRAINING:
         raise ValueError(f'Experiment not valid. Availables experiments: {CHOICE_TRAINING}')
     
+    if experiment == 'all':
+        experiment = CHOICE_TRAINING[:-1]
+    else:
+        experiment = [experiment]
+    
     try:
         choosed_model = [model for name, model in MODELS_LIST if name == model_name][0]
     except IndexError:
@@ -119,7 +124,7 @@ def get_epochs(raw):
     events, event_dict = mne.events_from_annotations(raw, event_id=event_id, verbose=VERBOSE)
 
     tmin = -0.5
-    tmax = 4
+    tmax = 4.
     picks = mne.pick_types(raw.info, meg=True, eeg=True, stim=False, eog=False, exclude='bads')
     epochs = mne.Epochs(raw, events, event_dict, tmin, tmax, proj=True, picks=picks, baseline=None, preload=True, verbose=VERBOSE)
 
@@ -156,36 +161,48 @@ if __name__ == "__main__":
     
     subject_len = len(subject)
     need_calculate_mean = subject_len > 1
-    results = []
-    for s in subject:
-        raw = load_data(s, experiment, directory_dataset, VERBOSE)
-        epochs, event_dict, raw = get_epochs(raw)
-        X, y = get_X_y(epochs)
+    results = {}
+    for e in experiment:
+        local_print(f'Experiment: {e}')
+        results[e] = {"mean": 0, "results": []}
 
-        scaler = mne.decoding.Scaler(epochs.info) # Standardize channel data.
+        for s in subject:
+            raw = load_data(s, e, directory_dataset, VERBOSE)
+            epochs, event_dict, raw = get_epochs(raw)
+            X, y = get_X_y(epochs)
 
-        # shuffle_split = ShuffleSplit(n_splits=3, test_size=0.2, random_state=42)
-        shuffle_split = StratifiedKFold(n_splits=3, shuffle=False)
-        pipeline = Pipeline([
-            (f'scaler', scaler),
-            (f'decomposition {decomp_alg}', choosed_decomp_alg),
-            (f'clf {model_name}', choosed_model)
-        ], verbose=VERBOSE)
-        if need_calculate_mean or VERBOSE:
-            score = cross_val_score(pipeline, X, y, cv=shuffle_split, n_jobs=1, verbose=VERBOSE)
-            # scores = cross_validate(pipeline, X, y, cv=shuffle_split, n_jobs=1, return_estimator=True, verbose=VERBOSE)
-            
-            # score = scores['test_score']
-            results.append(np.mean(score))
-            local_print("\n")
-            local_print("Cross validation scores:")
-            local_print(f"Raw: {score}")
-            local_print(f"Accuracy: {np.mean(score)} (+/- {np.std(score)})")
+            scaler = mne.decoding.Scaler(epochs.info) # Standardize channel data.
 
-    if need_calculate_mean:
-        print("\n")
-        print("Cross validation scores:")
-        print(f"Accuracy: {np.mean(results)} (+/- {np.std(results)})")
+            # shuffle_split = ShuffleSplit(n_splits=3, test_size=0.2, random_state=42)
+            shuffle_split = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
+            pipeline = Pipeline([
+                (f'scaler', scaler),
+                (f'decomposition {decomp_alg}', choosed_decomp_alg),
+                (f'clf {model_name}', choosed_model)
+            ], verbose=VERBOSE)
+            if need_calculate_mean or VERBOSE:
+                score = cross_val_score(pipeline, X, y, cv=shuffle_split, n_jobs=1, verbose=VERBOSE)
+                # scores = cross_validate(pipeline, X, y, cv=shuffle_split, n_jobs=1, return_estimator=True, verbose=VERBOSE)
+                
+                # score = scores['test_score']
+                results[e]["results"].append(np.mean(score))
+                local_print("\n")
+                local_print("Cross validation scores:")
+                local_print(f"Raw: {score}")
+                local_print(f"Accuracy: {np.mean(score)} (+/- {np.std(score)})")
+
+        if need_calculate_mean:
+            mean = np.mean(results[e]["results"])
+            std = np.std(results[e]["results"])
+            print("\n")
+            print("Cross validation scores:")
+            print(f"Accuracy: {mean} (+/- {std})")
+            results[e]["mean"] = mean
+
+    print("\n")
+    print(f"Experiment {'':<10}  {'':>8} mean accuracy")
+    for k, v in results.items():
+        print(f"{k:<30} {v['mean']:>20}")
 
     with open("test.json", 'w') as f:
         json.dump(results, f)

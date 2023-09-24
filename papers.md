@@ -33,7 +33,13 @@
 - https://www.sciencedirect.com/science/article/abs/pii/S0165027019300639
 - https://bcmi.sjtu.edu.cn/~seed/seed.html
 - http://mindbigdata.com/opendb/index.html
+- https://www.sciencedirect.com/science/article/abs/pii/B9780128145975000060
 
 ## Websites
 
 - https://mne.tools/stable/index.html
+- https://mne.tools/stable/auto_examples/decoding/decoding_csp_eeg.html
+- https://www.kaggle.com/code/alexandrebarachant/common-spatial-pattern-with-mne
+- https://medium.com/geekculture/common-spatial-pattern-and-its-applications-in-the-healthcare-industry-faa4311dab79
+- https://en.wikipedia.org/wiki/Common_spatial_pattern
+- https://en.wikipedia.org/wiki/Cross-validation_(statistics)#k-fold_cross-validation

@@ -14,6 +14,8 @@ Common Spatial Patterns (CSP) algorithm is employed to extract discriminative sp
 
 The goal of the CSP algorithm is to find spatial filters that maximize the variance of one class of signals while minimizing the variance of another class. This is achieved by finding a transformation matrix that, when applied to the raw EEG signals, results in new signals (features) that have the highest variance for one class and the lowest variance for the other.
 
+[More information here](./notebooks/decomposition_alg/csp/README.md)
+
 ### ICA (Independent Component Analysis)
 
 Independent Component Analysis (ICA) is a statistical and computational technique used to separate a multivariate signal into its constituent independent subcomponents. It's particularly useful when the observed signals are a linear mixture of various independent sources, making it a powerful tool in signal processing, neuroscience, image processing, and other fields.
