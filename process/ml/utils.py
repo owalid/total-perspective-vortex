@@ -18,7 +18,7 @@ EXPERIMENTS = {
 }
 
 
-def load_data(subject, experiment, directory_dataset, VERBOSE=False):
+def load_data(subjects, experiment, directory_dataset, VERBOSE=False):
     '''
     =========  ===================================
     run        task
@@ -31,10 +31,66 @@ def load_data(subject, experiment, directory_dataset, VERBOSE=False):
     6, 10, 14  Motor imagery: hands vs feet
     =========  ===================================
     '''
+    raws = []
+    for subject in subjects:
+        subject = f'S{subject:03d}'
+
+        files = glob.glob(f'{directory_dataset}/{subject}/*.edf')
+
+        for i in EXPERIMENTS[experiment]:
+            current_file = files[i-1]
+            r = read_raw_edf(current_file, preload=True, stim_channel='auto', verbose=VERBOSE)
+            raws.append(r)
+
+    raw = concatenate_raws(raws)
+    raw = filter_data(raw, VERBOSE)
+    return raw
+
+def load_data_all(subjects, experiment, directory_dataset, VERBOSE=False):
+    '''
+    =========  ===================================
+    run        task
+    =========  ===================================
+    1          Baseline, eyes open
+    2          Baseline, eyes closed
+    3, 7, 11   Motor execution: left vs right hand
+    4, 8, 12   Motor imagery: left vs right hand
+    5, 9, 13   Motor execution: hands vs feet
+    6, 10, 14  Motor imagery: hands vs feet
+    =========  ===================================
+    '''
+    raws = []
+    for subject in subjects:
+        subject = f'S{subject:03d}'
+
+        files = glob.glob(f'{directory_dataset}/{subject}/*.edf')
+
+        for i in EXPERIMENTS[experiment]:
+            current_file = files[i-1]
+            r = read_raw_edf(current_file, preload=True, stim_channel='auto', verbose=VERBOSE)
+            raws.append(r)
+
+    raw = concatenate_raws(raws)
+    raw = filter_data(raw, VERBOSE)
+    return raw
+
+def load_data_one(subject, experiment, directory_dataset, VERBOSE=False):
+    '''
+    =========  ===================================
+    run        task
+    =========  ===================================
+    1          Baseline, eyes open
+    2          Baseline, eyes closed
+    3, 7, 11   Motor execution: left vs right hand
+    4, 8, 12   Motor imagery: left vs right hand
+    5, 9, 13   Motor execution: hands vs feet
+    6, 10, 14  Motor imagery: hands vs feet
+    =========  ===================================
+    '''
+    raws = []
     subject = f'S{subject:03d}'
 
     files = glob.glob(f'{directory_dataset}/{subject}/*.edf')
-    raws = []
 
     for i in EXPERIMENTS[experiment]:
         current_file = files[i-1]
@@ -43,8 +99,8 @@ def load_data(subject, experiment, directory_dataset, VERBOSE=False):
 
     raw = concatenate_raws(raws)
     raw = filter_data(raw, VERBOSE)
+    
     return raw
-
 
 def filter_data(raw, VERBOSE=False):
     # notch filter for power line noise
@@ -52,7 +108,7 @@ def filter_data(raw, VERBOSE=False):
     raw.notch_filter(notch_freq, fir_design='firwin', verbose=VERBOSE)
 
     # band pass filter
-    raw.filter(8, 40, fir_design='firwin', verbose=VERBOSE)
+    raw.filter(8, 35, fir_design='firwin', verbose=VERBOSE)
 
     # eegbci.standardize(raw)
     # montage = mne.channels.make_standard_montage('standard_1005')
