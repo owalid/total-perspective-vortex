@@ -1,5 +1,7 @@
 # total-perspective-vortex
 
+[![wakatime](https://wakatime.com/badge/user/57a746b4-0744-4dc9-a0f3-61d9ea529bde/project/6f3d6c65-19f8-4e7a-b934-3fb1e3b0cd26.svg)](https://wakatime.com/badge/user/57a746b4-0744-4dc9-a0f3-61d9ea529bde/project/6f3d6c65-19f8-4e7a-b934-3fb1e3b0cd26)
+
 # Description
 
 This project aims to classify states from EEG data acquired from PhysioNet. The primary goal is to design an accurate classification system using decomposition algorithms and machine learning techniques.

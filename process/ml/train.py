@@ -111,14 +111,12 @@ def check_args(args):
 
 def get_epochs(raw):
     event_id = {'T1': 1, 'T2': 2}
-    events, event_dict = mne.events_from_annotations(raw, event_id=event_id, verbose=VERBOSE)
+    events, _ = mne.events_from_annotations(raw, event_id=event_id, verbose=VERBOSE)
 
-    tmin = -0.5
-    tmax = 4.
-    picks = mne.pick_types(raw.info, meg=True, eeg=True, stim=False, eog=False, exclude='bads')
-    epochs = mne.Epochs(raw, events, event_dict, tmin, tmax, proj=True, picks=picks, baseline=None, preload=True, verbose=VERBOSE)
+    picks = mne.pick_types(raw.info, meg=False, eeg=True, stim=False, eog=False, exclude='bads')
+    epochs = mne.Epochs(raw, events, event_id, -0.5, 3., proj=True, picks=picks, baseline=None, preload=True, verbose=VERBOSE)
 
-    return epochs, event_dict, raw
+    return epochs, event_id, raw
 
 def get_X_y(epochs):
     X = epochs.get_data()
@@ -128,22 +126,22 @@ def get_X_y(epochs):
 
 def process_model(X, y, epochs, choosed_decomp_alg, choosed_model, need_calculate_mean, VERBOSE):
     scaler = mne.decoding.Scaler(epochs.info) # Standardize channel data.
-
-    # shuffle_split = ShuffleSplit(n_splits=3, test_size=0.2, random_state=42)
-    shuffle_split = StratifiedKFold(n_splits=7, shuffle=False)
+    res_accuracy = None
+    
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
     pipeline = Pipeline([
         (f'scaler', scaler),
         (f'decomposition {decomp_alg}', choosed_decomp_alg),
         (f'clf {model_name}', choosed_model)
     ], verbose=VERBOSE)
     if need_calculate_mean or VERBOSE:
-        score = cross_val_score(pipeline, X, y, cv=shuffle_split, n_jobs=1, verbose=VERBOSE)
+        score = cross_val_score(pipeline, X, y, cv=cv, n_jobs=1, verbose=VERBOSE)
 
         res_accuracy = np.mean(score)
         local_print("\n")
         local_print("Cross validation scores:")
         local_print(f"Raw: {score}")
-        local_print(f"Accuracy: {np.mean(score)} (+/- {np.std(score)})")
+        local_print(f"Accuracy: {res_accuracy} (+/- {np.std(score)})")
 
     return res_accuracy, pipeline
 
@@ -151,7 +149,7 @@ if __name__ == "__main__":
     parser = ap.ArgumentParser(formatter_class=ap.RawTextHelpFormatter)
 
     parser.add_argument('-s', '--subject', type=str, help='Subject number, sequence of subjects (separated by comma) or all', required=True)
-    parser.add_argument('-ps', '--pack-subj', type=str, help='Pack subject, to have one model by experiment', required=False)
+    parser.add_argument('-ps', '--pack-subj', action='store_true', help='Pack subject, to have one model by experiment', default=False, required=False)
     parser.add_argument('-e', '--experiment', type=str, help='Type training', required=False, choices=CHOICE_TRAINING, default='hands_vs_feet')
     parser.add_argument('-d', '--directory-dataset', type=str, help='Directory dataset', required=False, default='../../files')
     parser.add_argument('-m', '--model', type=str, help=f'Model name.\nAvailables models: {MODEL_NAMES_STR}', required=False, default='lda')
@@ -201,17 +199,20 @@ if __name__ == "__main__":
 
         if not no_save_model:
             pipeline = pipeline.fit(X, y)
-            joblib.dump(pipeline, output)
+            joblib.dump(pipeline, output + f'_{e}.joblib' if pack_subj else f'_{e}_{subject[0]}.joblib')
 
-    m = []
-    print("\n")
-    print(f"Experiment {'':<10}  {'':>8} mean accuracy")
-    for k, v in results.items():
-        m.append(v['mean'])
-        print(f"{k:<30} {v['mean']:>20}")
-    
-    m = np.array(m)
-    print(f"Mean accuracy of 4 experiments: {np.mean(m)}")
+    if need_calculate_mean and len(results.values()) and len(list(results.values())[0]['results']) > 0:
+        m = []
+        print("\n")
+        print(f"Experiment {'':<10}  {'':>8} mean accuracy")
+        for k, v in results.items():
+            m.append(v['mean'])
+            print(f"{k:<30} {v['mean']:>20}")
+        
+        m = np.array(m)
+        print(f"Mean accuracy of {len(experiment)} experiments: {np.mean(m)}")
 
-    with open("test.json", 'w') as f:
-        json.dump(results, f)
+    if VERBOSE:
+        print("Result file saved in: ./results.json")
+        with open("results.json", 'w') as f:
+            json.dump(results, f)
