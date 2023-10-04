@@ -88,6 +88,9 @@ def check_args(args):
     directory_dataset = args.directory_dataset
     type_training = args.type_training
 
+    if nums_subjects == 'all':
+        nums_subjects = len(SUBJECT_AVAILABLES)
+    nums_subjects = int(nums_subjects)
     if type_training not in CHOICE_TRAINING:
         raise ValueError(f'Type training must be in {CHOICE_TRAINING}')
     
@@ -121,10 +124,10 @@ def check_args(args):
 
 if __name__ == "__main__":
     parser = ap.ArgumentParser(formatter_class=ap.RawTextHelpFormatter)
-    parser.add_argument('-ns', '--nums-subjects', type=int, help='Numbers of subjects', required=True)
+    parser.add_argument('-ns', '--nums-subjects', type=str, help='Numbers of subjects', required=True)
     parser.add_argument('-t', '--type-training', type=str, help='Type training', required=False, choices=CHOICE_TRAINING, default='all')
-    parser.add_argument('-r', '--ratio', type=float, help='Ratio of train/test', required=True)
-    parser.add_argument('-e', '--epochs', type=int, help='Epochs', default=250, required=False)
+    parser.add_argument('-r', '--ratio', type=float, help='Percent of train', required=False, default=0.8)
+    parser.add_argument('-e', '--epochs', type=int, help='Epochs', default=15, required=False)
     parser.add_argument('-bs', '--batch-size', type=int, help='Batch size', default=10, required=False)
     parser.add_argument('-d', '--directory-dataset', type=str, help='Directory dataset', required=False, default='../../files')
     parser.add_argument('-m', '--model', type=str, help=f'Model name.\nAvailables models: {MODEL_NAMES_STR}', required=False, default='gcn_classic')
