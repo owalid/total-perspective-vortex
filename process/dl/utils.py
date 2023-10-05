@@ -10,11 +10,11 @@ SUBJECT_AVAILABLES.remove(100)
 
 EXPERIMENTS = {
     'hands_vs_feet': {
-        'experiments': [3, 7, 11],
+        'experiments': [5, 9, 13],
         'events': {'T1': 1, 'T2': 2}
     },
     'left_vs_right': {
-        'experiments': [5, 9, 13],
+        'experiments': [3, 7, 11],
         'events': {'T1': 1, 'T2': 2}
     },
     'imagery_left_vs_right': {
@@ -35,6 +35,7 @@ EXPERIMENTS = {
 def load_one_subject(current_raws, subject_num, directory_dataset, type_training):
     subject = f'S{subject_num:03d}'
     files = glob.glob(f'{directory_dataset}/{subject}/*.edf')
+    files.sort()
     for i in EXPERIMENTS[type_training]['experiments']:
         current_file = files[i]
         r = read_raw_edf(current_file, preload=True, stim_channel='auto')
