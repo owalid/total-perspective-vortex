@@ -153,7 +153,7 @@ if __name__ == "__main__":
     parser.add_argument('-e', '--experiment', type=str, help='Type training', required=False, choices=CHOICE_TRAINING, default='hands_vs_feet')
     parser.add_argument('-d', '--directory-dataset', type=str, help='Directory dataset', required=False, default='../../files')
     parser.add_argument('-m', '--model', type=str, help=f'Model name.\nAvailables models: {MODEL_NAMES_STR}', required=False, default='lda')
-    parser.add_argument('-o', '--output', type=str, help='Output path file', required=False, default='output_model/model.joblib')
+    parser.add_argument('-o', '--output', type=str, help='Output path file', required=False, default='./output_model/model')
     parser.add_argument('-da', '--decomposition-algorithm', type=str, help=f'Decomposition algorithm.\nAvailable: {DECOMPOSITION_ALGORITHMS_NAMES_STR}', required=False, default='TurboCSP')
     parser.add_argument('-nsmdl', '--no-save-model', action='store_true', help='Save model', default=False)
     parser.add_argument('-v', '--verbose', action='store_true', help='Verbose', default=False)
@@ -172,6 +172,7 @@ if __name__ == "__main__":
     subject_len = len(subject)
     need_calculate_mean = subject_len > 1
     results = {}
+    pipeline = None
     for e in experiment:
         local_print(f'Experiment: {e}')
         results[e] = {"mean": 0, "results": []}
@@ -186,7 +187,7 @@ if __name__ == "__main__":
                 raw = load_data_one(s, e, directory_dataset, VERBOSE)
                 epochs, event_dict, raw = get_epochs(raw)
                 X, y = get_X_y(epochs)
-                score, _ = process_model(X, y, epochs, choosed_decomp_alg, choosed_model, need_calculate_mean, VERBOSE)
+                score, pipeline = process_model(X, y, epochs, choosed_decomp_alg, choosed_model, need_calculate_mean, VERBOSE)
                 results[e]["results"].append(score)
 
         if need_calculate_mean:
@@ -197,9 +198,12 @@ if __name__ == "__main__":
             print(f"Accuracy: {mean} (+/- {std})")
             results[e]["mean"] = mean
 
-        if not no_save_model:
+        if not no_save_model and pipeline is not None:
             pipeline = pipeline.fit(X, y)
-            joblib.dump(pipeline, output + f'_{e}.joblib' if pack_subj else f'_{e}_{subject[0]}.joblib')
+            prefix = f'_{e}.joblib' if pack_subj else f'_{e}_{subject[0]}.joblib'
+            path = output + prefix
+            print(f"[+] Saving model in {path}")
+            joblib.dump(pipeline, path)
 
     if need_calculate_mean and len(results.values()) and len(list(results.values())[0]['results']) > 0:
         m = []

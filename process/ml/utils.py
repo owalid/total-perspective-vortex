@@ -1,3 +1,4 @@
+from mne.preprocessing import ICA
 from mne.io import concatenate_raws, read_raw_edf
 import glob
 
@@ -110,14 +111,14 @@ def filter_data(raw, VERBOSE=False):
     raw.filter(7, 30, fir_design='firwin', skip_by_annotation='edge', verbose=VERBOSE)
 
 
-    # # ICA
-    # ica = mne.preprocessing.ICA(n_components=5, random_state=97, max_iter=800, verbose=VERBOSE)
-    # ica.fit(raw, verbose=VERBOSE)
+    # ICA
+    ica = ICA(n_components=20, random_state=97, max_iter=500, verbose=VERBOSE)
+    ica.fit(raw, verbose=VERBOSE)
 
-    # components_to_excludes, _ = ica.find_bads_eog(raw, ch_name='Fpz')
+    components_to_excludes, _ = ica.find_bads_eog(raw, ch_name='Fpz.')
 
-    # if components_to_excludes is not None and len(components_to_excludes) > 0:
-    #     ica.exclude = components_to_excludes
-    #     raw = ica.apply(raw)
+    if components_to_excludes is not None and len(components_to_excludes) > 0:
+        ica.exclude = components_to_excludes
+        raw = ica.apply(raw)
 
     return raw
