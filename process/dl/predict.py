@@ -5,10 +5,16 @@ from tensorflow.keras.utils import to_categorical, normalize
 from tensorflow.keras.models import load_model
 from mne.io import concatenate_raws
 import json
+from colorama import *
+
 from utils import preprocess_raw, load_one_subject, SUBJECT_AVAILABLES
 
 VERBOSE = False
 CHOICE_TRAINING = ['all', 'hands_vs_feet', 'left_vs_right', 'hands_vs_feet', 'left_vs_right']
+
+def local_print(msg):
+    if VERBOSE:
+        print(msg)
 
 def check_args(args):
     subject = args.subject
@@ -88,28 +94,43 @@ if __name__ == "__main__":
         X = normalize(X, axis=1, order=0)
         y = epochs.events[:, -1] - 1
         y = to_categorical(y)
-        print(f"y = {y}")
-        if VERBOSE:
-            print(f'Predicting...')
+        local_print(f'Predicting...')
         y_pred = choosed_model.predict(X)
 
 
-        # TODO MAKE FUNCTION TO PARSE PROBABILITIES OF PREDICTIONS
-        print(f'Predictions: {y_pred}')
+        print(f"[+] Subject: S{s:03d}")
+        local_print(f"y = {y}")
+        local_print(f'Predictions: {y_pred}')
         predict_correct = np.argmax(y_pred, axis=1) == np.argmax(y, axis=1)
         good_prediction = 0
         for i in range(len(predict_correct)):
             if predict_correct[i].all():
                 good_prediction += 1
-        print(f'Accuracy: {good_prediction/len(predict_correct)}')
         results.append({
             'subject': s,
             'accuracy': good_prediction/len(predict_correct)
         })
-        if VERBOSE:
-            print(f'Good predictions: {good_prediction} / {len(predict_correct)}')
-            print(f'Bad predictions: {len(predict_correct) - good_prediction}/ {len(predict_correct)}')
-            print(f'Predictions: {predict_correct}')
+
+        print("\nEpochs [prediction] [real] [correct]")
+        for ii in range(X.shape[0]):
+            color = Fore.GREEN if predict_correct[ii] else Fore.RED
+            current_predi = f"[{predict_correct[ii]}]"
+            print(f'Epoch {ii:<5} {np.argmax(y_pred[ii]):<10} {np.argmax(y[ii]):<5} {color}{Style.BRIGHT}{current_predi:<8}{Style.RESET_ALL}')
+        
+        print(f'\nGood predictions: {good_prediction} / {len(predict_correct)}')
+        print(f'Bad predictions: {len(predict_correct) - good_prediction} / {len(predict_correct)}')
+        print(f'Accuracy: {good_prediction/len(predict_correct)}')
     
+    if VERBOSE:
+        m = []
+        print("\n")
+        print("Summary:")
+        print(f"Subject {'':<7}  {'':>12} accuracy")
+        for r in results:
+            print(f"{r['subject']:<10} {round(r['accuracy'], 3):>24}")
+            m.append(r['accuracy'])
+        m = np.array(m)
+        print(f"Mean accuracy of {len(subject)} subjects: {np.mean(m):>19}")
+
     with open(output_file, 'w') as f:
         json.dump(results, f)

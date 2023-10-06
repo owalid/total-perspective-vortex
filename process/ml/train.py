@@ -60,7 +60,7 @@ def check_args(args):
     experiment = args.experiment
     output = args.output
     verbose = args.verbose
-    no_save_model = args.no_save_model
+    save_model = args.save_model
     decomp_alg = args.decomposition_algorithm
     directory_dataset = args.directory_dataset
     pack_subj = args.pack_subj
@@ -107,7 +107,7 @@ def check_args(args):
     if not os.path.exists(dir_output) and dir_output != '':
         raise ValueError(f'Output directory path not valid: {output}')
     
-    return model_name, choosed_model, decomp_alg, choosed_decomp_alg, subject, experiment, output, no_save_model, directory_dataset, pack_subj, verbose
+    return model_name, choosed_model, decomp_alg, choosed_decomp_alg, subject, experiment, output, save_model, directory_dataset, pack_subj, verbose
 
 def get_epochs(raw):
     event_id = {'T1': 1, 'T2': 2}
@@ -153,13 +153,13 @@ if __name__ == "__main__":
     parser.add_argument('-e', '--experiment', type=str, help='Type training', required=False, choices=CHOICE_TRAINING, default='hands_vs_feet')
     parser.add_argument('-d', '--directory-dataset', type=str, help='Directory dataset', required=False, default='../../files')
     parser.add_argument('-m', '--model', type=str, help=f'Model name.\nAvailables models: {MODEL_NAMES_STR}', required=False, default='lda')
-    parser.add_argument('-o', '--output', type=str, help='Output path file', required=False, default='./output_model/model')
+    parser.add_argument('-o', '--output', type=str, help='Output directory', required=False, default='./output/')
     parser.add_argument('-da', '--decomposition-algorithm', type=str, help=f'Decomposition algorithm.\nAvailable: {DECOMPOSITION_ALGORITHMS_NAMES_STR}', required=False, default='TurboCSP')
-    parser.add_argument('-nsmdl', '--no-save-model', action='store_true', help='Save model', default=False)
+    parser.add_argument('-sv', '--save-model', action='store_true', help='Save model', default=False)
     parser.add_argument('-v', '--verbose', action='store_true', help='Verbose', default=False)
     args = parser.parse_args()
 
-    model_name, choosed_model, decomp_alg, choosed_decomp_alg, subject, experiment, output, no_save_model, directory_dataset, pack_subj, VERBOSE = check_args(args)
+    model_name, choosed_model, decomp_alg, choosed_decomp_alg, subject, experiment, output, save_model, directory_dataset, pack_subj, VERBOSE = check_args(args)
     
     local_print(f'Using model: {model_name}')
     local_print(f'Using decomposition algorithm: {decomp_alg}')
@@ -198,7 +198,7 @@ if __name__ == "__main__":
             print(f"Accuracy: {mean} (+/- {std})")
             results[e]["mean"] = mean
 
-        if not no_save_model and pipeline is not None:
+        if save_model and pipeline is not None:
             pipeline = pipeline.fit(X, y)
             prefix = f'_{e}.joblib' if pack_subj else f'_{e}_{subject[0]}.joblib'
             path = output + prefix
@@ -218,5 +218,5 @@ if __name__ == "__main__":
 
     if VERBOSE:
         print("Result file saved in: ./results.json")
-        with open("results.json", 'w') as f:
+        with open(f"{output}results.json", 'w') as f:
             json.dump(results, f)

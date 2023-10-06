@@ -82,7 +82,7 @@ def check_args(args):
     model_name = args.model
     output = args.output
     verbose = args.verbose
-    save_model = not args.no_save_model
+    save_model = not args.save_model
     batch_size = args.batch_size
     epochs = args.epochs
     directory_dataset = args.directory_dataset
@@ -90,7 +90,12 @@ def check_args(args):
 
     if nums_subjects == 'all':
         nums_subjects = len(SUBJECT_AVAILABLES)
+
     nums_subjects = int(nums_subjects)
+
+    if nums_subjects < 3:
+        raise ValueError(f'Number of subjects must be greater than 1')
+
     if type_training not in CHOICE_TRAINING:
         raise ValueError(f'Type training must be in {CHOICE_TRAINING}')
     
@@ -132,7 +137,7 @@ if __name__ == "__main__":
     parser.add_argument('-d', '--directory-dataset', type=str, help='Directory dataset', required=False, default='../../files')
     parser.add_argument('-m', '--model', type=str, help=f'Model name.\nAvailables models: {MODEL_NAMES_STR}', required=False, default='gcn_classic')
     parser.add_argument('-o', '--output', type=str, help='Output path file', required=False, default='output_model/model.h5')
-    parser.add_argument('-nsmdl', '--no-save-model', action='store_true', help='Save model', default=False)
+    parser.add_argument('-sv', '--save-model', action='store_true', help='Save model', default=False)
     parser.add_argument('-v', '--verbose', action='store_true', help='Verbose', default=False)
     args = parser.parse_args()
 

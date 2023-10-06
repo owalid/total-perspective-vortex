@@ -53,15 +53,16 @@ There is usage of the scripts:
 
 **Train script:**
 ```
-python train.py -h
-usage: train.py [-h] -s SUBJECT [-e {hands_vs_feet,left_vs_right,imagery_left_vs_right,imagery_hands_vs_feet}]
-                [-d DIRECTORY_DATASET] [-m MODEL] [-o OUTPUT] [-da DECOMPOSITION_ALGORITHM] [-nsmdl] [-v]
+python train.py -h  
+usage: train.py [-h] -s SUBJECT [-ps] [-e {hands_vs_feet,left_vs_right,imagery_left_vs_right,imagery_hands_vs_feet,all}]
+                [-d DIRECTORY_DATASET] [-m MODEL] [-o OUTPUT] [-da DECOMPOSITION_ALGORITHM] [-sv] [-v]
 
 optional arguments:
   -h, --help            show this help message and exit
   -s SUBJECT, --subject SUBJECT
                         Subject number, sequence of subjects (separated by comma) or all
-  -e {hands_vs_feet,left_vs_right,imagery_left_vs_right,imagery_hands_vs_feet}, --experiment {hands_vs_feet,left_vs_right,imagery_left_vs_right,imagery_hands_vs_feet}
+  -ps, --pack-subj      Pack subject, to have one model by experiment
+  -e {hands_vs_feet,left_vs_right,imagery_left_vs_right,imagery_hands_vs_feet,all}, --experiment {hands_vs_feet,left_vs_right,imagery_left_vs_right,imagery_hands_vs_feet,all}
                         Type training
   -d DIRECTORY_DATASET, --directory-dataset DIRECTORY_DATASET
                         Directory dataset
@@ -69,20 +70,19 @@ optional arguments:
                         Model name.
                         Availables models: gradient_boosting,lda,svc,knn,random_forest,mlp,decision_tree,xgb
   -o OUTPUT, --output OUTPUT
-                        Output path file
+                        Output directory
   -da DECOMPOSITION_ALGORITHM, --decomposition-algorithm DECOMPOSITION_ALGORITHM
                         Decomposition algorithm.
                         Available: TurboCSP,MNECSP
-  -nsmdl, --no-save-model
-                        Save model
-  -v, --verbose         Verbose                                                                                          ~5s 
+  -sv, --save-model     Save model
+  -v, --verbose         Verbose
 ```
 
 **Prediction script:**
 ```
 python predict.py -h
-usage: predict.py [-h] [-strm] [-e {all,hands_vs_feet,left_vs_right,hands_vs_feet,left_vs_right}] [-o OUTPUT_FILE] -s
-                  SUBJECT [-m MODEL_PATH] [-d DIRECTORY_DATASET] [-v]
+usage: predict.py [-h] [-strm] [-e {all,hands_vs_feet,left_vs_right,hands_vs_feet,left_vs_right}] [-o OUTPUT_FILE] -s SUBJECT
+                  [-m MODEL_PATH] [-d DIRECTORY_DATASET] [-v]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -97,7 +97,7 @@ optional arguments:
                         Model path
   -d DIRECTORY_DATASET, --directory-dataset DIRECTORY_DATASET
                         Directory dataset
-  -v, --verbose         Verbose 
+  -v, --verbose         Verbose
 ```
 
 You can also use ml prediction with stream server. The stream server is located in the `/process/ml/stream/main.py` file. There is an example of usage with prediction script:
