@@ -49,7 +49,7 @@ def plot_from_json_data(data):
 
 if __name__ == "__main__":
     parser = ap.ArgumentParser(formatter_class=ap.RawTextHelpFormatter)
-    parser.add_argument('-i', '--input_file', type=str, help='Input file with results in json format', required=True)
+    parser.add_argument('-i', '--input_file', type=str, help='Input file with results in json format', required=True)   
     args = parser.parse_args()
 
     input_file = args.input_file
@@ -60,4 +60,10 @@ if __name__ == "__main__":
     with open(input_file, 'r') as f:
         data = json.load(f)
     
-    plot_from_json_data(data)
+    if type(data) is not list:
+        for k, v in data.items():
+            print(f'\n[+] Experiment: {k}')
+            current_data = v["results"]
+            plot_from_json_data(current_data)
+    else:
+        plot_from_json_data(data)

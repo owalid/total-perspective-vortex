@@ -175,24 +175,27 @@ if __name__ == "__main__":
     pipeline = None
     for e in experiment:
         local_print(f'Experiment: {e}')
+        experiment_results = []
         results[e] = {"mean": 0, "results": []}
         if pack_subj:
             raw = load_data_all(subject, e, directory_dataset, VERBOSE)
             epochs, event_dict, raw = get_epochs(raw)
             X, y = get_X_y(epochs)
             score, pipeline = process_model(X, y, epochs, choosed_decomp_alg, choosed_model, need_calculate_mean, VERBOSE)
-            results[e]["results"].append(score)
+            results[e]["results"].append({"subject": "all", "accuracy": score})
+            experiment_results.append(score)
         else:
             for s in subject:
                 raw = load_data_one(s, e, directory_dataset, VERBOSE)
                 epochs, event_dict, raw = get_epochs(raw)
                 X, y = get_X_y(epochs)
                 score, pipeline = process_model(X, y, epochs, choosed_decomp_alg, choosed_model, need_calculate_mean, VERBOSE)
-                results[e]["results"].append(score)
+                experiment_results.append(score)
+                results[e]["results"].append({"subject": s, "accuracy": score})
 
         if need_calculate_mean:
-            mean = np.mean(results[e]["results"])
-            std = np.std(results[e]["results"])
+            mean = np.mean(experiment_results)
+            std = np.std(experiment_results)
             print("\n")
             print("Cross validation scores:")
             print(f"Accuracy: {mean} (+/- {std})")
