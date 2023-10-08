@@ -32,10 +32,10 @@ MODELS_LIST = [
     ('gradient_boosting', GradientBoostingClassifier(n_estimators=100)),
     ('lda', LinearDiscriminantAnalysis(solver='svd', tol=0.0001)),
     ('svc', SVC(C=1, kernel='linear')),
-    ('knn', KNeighborsClassifier(n_neighbors=4)),
+    ('knn', KNeighborsClassifier(n_neighbors=2)),
     ('random_forest', RandomForestClassifier()),
     ('mlp', MLPClassifier(hidden_layer_sizes=(200, 100), max_iter=400)),
-    ('decision_tree', DecisionTreeClassifier(max_depth=100)),
+    ('decision_tree', DecisionTreeClassifier(max_depth=50)),
     ('xgb', XGBClassifier(learning_rate=0.05, n_estimators=200))
 ]
 MODEL_NAMES = [name for name, _ in MODELS_LIST]
@@ -114,7 +114,7 @@ def get_epochs(raw):
     events, _ = mne.events_from_annotations(raw, event_id=event_id, verbose=VERBOSE)
 
     picks = mne.pick_types(raw.info, meg=False, eeg=True, stim=False, eog=False, exclude='bads')
-    epochs = mne.Epochs(raw, events, event_id, -0.5, 3., proj=True, picks=picks, baseline=None, preload=True, verbose=VERBOSE)
+    epochs = mne.Epochs(raw, events, event_id, -0.5, 3.5, proj=True, picks=picks, baseline=None, preload=True, verbose=VERBOSE)
 
     return epochs, event_id, raw
 
@@ -128,7 +128,7 @@ def process_model(X, y, epochs, choosed_decomp_alg, choosed_model, need_calculat
     scaler = mne.decoding.Scaler(epochs.info) # Standardize channel data.
     res_accuracy = None
     
-    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    cv = StratifiedKFold(n_splits=8, shuffle=True, random_state=42)
     pipeline = Pipeline([
         (f'scaler', scaler),
         (f'decomposition {decomp_alg}', choosed_decomp_alg),
