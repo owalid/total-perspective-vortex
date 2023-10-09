@@ -25,6 +25,7 @@ import argparse as ap
 
 from utils import load_data_all, load_data_one, SUBJECT_AVAILABLES
 from decomposition.TurboCSP import TurboCSP
+from mu_beta_process import get_X_y_mu_beta
 
 CHOICE_TRAINING = ['hands_vs_feet', 'left_vs_right', 'imagery_left_vs_right', 'imagery_hands_vs_feet', 'all']
 
@@ -49,6 +50,7 @@ DECOMPOSITION_ALGORITHMS_NAMES = [name for name, _ in DECOMPOSITION_ALGORITHMS]
 DECOMPOSITION_ALGORITHMS_NAMES_STR = ','.join(DECOMPOSITION_ALGORITHMS_NAMES)
 
 VERBOSE = False
+MU_BETA_PROCESS = False
 
 def local_print(msg):
     if VERBOSE:
@@ -64,6 +66,7 @@ def check_args(args):
     decomp_alg = args.decomposition_algorithm
     directory_dataset = args.directory_dataset
     pack_subj = args.pack_subj
+    mu_beta_process = args.mu_beta_process
 
     if subject == 'all':
         subject = SUBJECT_AVAILABLES
@@ -107,33 +110,36 @@ def check_args(args):
     if not os.path.exists(dir_output) and dir_output != '':
         raise ValueError(f'Output directory path not valid: {output}')
     
-    return model_name, choosed_model, decomp_alg, choosed_decomp_alg, subject, experiment, output, save_model, directory_dataset, pack_subj, verbose
+    return model_name, choosed_model, decomp_alg, choosed_decomp_alg, subject, experiment, output, save_model, directory_dataset, pack_subj, mu_beta_process, verbose
 
-def get_epochs(raw):
+def get_X_y(raw):
     event_id = {'T1': 1, 'T2': 2}
     events, _ = mne.events_from_annotations(raw, event_id=event_id, verbose=VERBOSE)
 
     picks = mne.pick_types(raw.info, meg=False, eeg=True, stim=False, eog=False, exclude='bads')
     epochs = mne.Epochs(raw, events, event_id, -0.5, 3.5, proj=True, picks=picks, baseline=None, preload=True, verbose=VERBOSE)
 
-    return epochs, event_id, raw
-
-def get_X_y(epochs):
     X = epochs.get_data()
     y = epochs.events[:, -1] - 1
 
-    return X, y
+    return X, y, epochs
 
 def process_model(X, y, epochs, choosed_decomp_alg, choosed_model, need_calculate_mean, VERBOSE):
-    scaler = mne.decoding.Scaler(epochs.info) # Standardize channel data.
     res_accuracy = None
-    
     cv = StratifiedKFold(n_splits=8, shuffle=True, random_state=42)
-    pipeline = Pipeline([
-        (f'scaler', scaler),
-        (f'decomposition {decomp_alg}', choosed_decomp_alg),
-        (f'clf {model_name}', choosed_model)
-    ], verbose=VERBOSE)
+    
+    if not MU_BETA_PROCESS:
+        scaler = mne.decoding.Scaler(epochs.info) # Standardize channel data.
+        pipeline = Pipeline([
+            (f'scaler', scaler),
+            (f'decomposition {decomp_alg}', choosed_decomp_alg),
+            (f'clf {model_name}', choosed_model)
+        ], verbose=VERBOSE)
+    else:
+        pipeline = Pipeline([
+            (f'clf {model_name}', choosed_model)
+        ], verbose=VERBOSE)
+
     if need_calculate_mean or VERBOSE:
         score = cross_val_score(pipeline, X, y, cv=cv, n_jobs=1, verbose=VERBOSE)
 
@@ -156,10 +162,11 @@ if __name__ == "__main__":
     parser.add_argument('-o', '--output', type=str, help='Output directory', required=False, default='./output/')
     parser.add_argument('-da', '--decomposition-algorithm', type=str, help=f'Decomposition algorithm.\nAvailable: {DECOMPOSITION_ALGORITHMS_NAMES_STR}', required=False, default='TurboCSP')
     parser.add_argument('-sv', '--save-model', action='store_true', help='Save model', default=False)
+    parser.add_argument('-mb', '--mu-beta-process', action='store_true', help='Save model', default=False)
     parser.add_argument('-v', '--verbose', action='store_true', help='Verbose', default=False)
     args = parser.parse_args()
 
-    model_name, choosed_model, decomp_alg, choosed_decomp_alg, subject, experiment, output, save_model, directory_dataset, pack_subj, VERBOSE = check_args(args)
+    model_name, choosed_model, decomp_alg, choosed_decomp_alg, subject, experiment, output, save_model, directory_dataset, pack_subj, MU_BETA_PROCESS, VERBOSE = check_args(args)
     
     local_print(f'Using model: {model_name}')
     local_print(f'Using decomposition algorithm: {decomp_alg}')
@@ -173,22 +180,22 @@ if __name__ == "__main__":
     need_calculate_mean = subject_len > 1
     results = {}
     pipeline = None
+
+    X_y_fn = get_X_y_mu_beta if MU_BETA_PROCESS else get_X_y
     for e in experiment:
         local_print(f'Experiment: {e}')
         experiment_results = []
         results[e] = {"mean": 0, "results": []}
         if pack_subj:
             raw = load_data_all(subject, e, directory_dataset, VERBOSE)
-            epochs, event_dict, raw = get_epochs(raw)
-            X, y = get_X_y(epochs)
+            X, y, epochs = X_y_fn(raw)
             score, pipeline = process_model(X, y, epochs, choosed_decomp_alg, choosed_model, need_calculate_mean, VERBOSE)
             results[e]["results"].append({"subject": "all", "accuracy": score})
             experiment_results.append(score)
         else:
             for s in subject:
                 raw = load_data_one(s, e, directory_dataset, VERBOSE)
-                epochs, event_dict, raw = get_epochs(raw)
-                X, y = get_X_y(epochs)
+                X, y, epochs = X_y_fn(raw)
                 score, pipeline = process_model(X, y, epochs, choosed_decomp_alg, choosed_model, need_calculate_mean, VERBOSE)
                 experiment_results.append(score)
                 results[e]["results"].append({"subject": s, "accuracy": score})

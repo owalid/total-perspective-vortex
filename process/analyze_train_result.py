@@ -61,9 +61,14 @@ if __name__ == "__main__":
         data = json.load(f)
     
     if type(data) is not list:
+        means = []
         for k, v in data.items():
             print(f'\n[+] Experiment: {k}')
             current_data = v["results"]
             plot_from_json_data(current_data)
+            if v["mean"] != 0:
+                means.append(v["mean"])
+        if len(means) > 0:
+            print(f'\n[+] Mean accuracy: {sum(means) / len(means)}')
     else:
         plot_from_json_data(data)

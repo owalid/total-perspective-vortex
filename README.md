@@ -182,13 +182,23 @@ The preprocessing steps are as follows:
 - Apply a decomposition algorithm ICA to extract independent components
 - Add pipeline with CSP -> <model> to classify the states
 
-The following table summarizes the results of the three best models:
+The following table summarizes the results of the three best models for one subject with experiment `hands_vs_feet`:
 
 | Model                              | Accuracy |
 |------------------------------------|---------|
 | Linear discriminant analysis (LDA)  | 0.86    |
 | Decision tree                       | 0.76    |
 | K-nearest neighbors (KNN)           | 0.70    |
+
+The following table summarizes the results of the bests models for all subjects with mean accurracy of all experiments:
+
+| Model                              | Accuracy |
+|------------------------------------|---------|
+| MLP                                 | 0.637   |
+| Linear discriminant analysis (LDA)  | 0.635   |
+| K-nearest neighbors (KNN)           | 0.634   |
+| SVM                                 | 0.629   |
+| Decision tree                       | 0.611   |
 
 
 ## Bonus part
@@ -271,10 +281,26 @@ From this independent components I have able to calculate the `activation_vector
 - variance
 - root_mean_square
 
+
+The following table summarizes the results of the three best models for one subject with experiment `hands_vs_feet`:
+
 | Model         | Accuracy |
 |---------------|----------|
 | Decision Tree | 0.81     |
 | MLP           | 0.54     |
+
+
+The following table summarizes the results of the best model for all subjects with mean accurracy of all experiments:
+
+| Experiment               | Model         | Accuracy  |
+|--------------------------|---------------|-----------|
+| hands_vs_feet            | Decision Tree | 0.790     |
+| left_vs_right            | Decision Tree | 0.790     |
+| imagery_left_vs_right    | Decision Tree | 0.788     |
+| imagery_hands_vs_feet    | Decision Tree | 0.787     |
+| mean of all experiment   | Decision Tree | 0.789     |
+
+The main drawback of this training is the training time, which needs to be tripled due to feature extraction.
 
 
 # Working with other dataset
