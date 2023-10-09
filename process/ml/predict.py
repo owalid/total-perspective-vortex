@@ -35,9 +35,11 @@ from colorama import *
 
 import json
 
-from utils import load_data, SUBJECT_AVAILABLES
+from utils import load_data_one, SUBJECT_AVAILABLES
+from mu_beta_process import get_X_y_mu_beta
 
 VERBOSE = False
+MU_BETA_PROCESS = False
 CHOICE_TRAINING = ['all', 'hands_vs_feet', 'left_vs_right', 'hands_vs_feet', 'left_vs_right']
 
 def check_args(args):
@@ -48,6 +50,7 @@ def check_args(args):
     directory_dataset = args.directory_dataset
     output_file = args.output_file
     stream_mode = args.stream_mode
+    mu_beta_process = args.mu_beta_process
     VERBOSE = args.verbose
 
     if subject == 'all':
@@ -80,7 +83,7 @@ def check_args(args):
     
     pipeline = joblib.load(model_path)
 
-    return pipeline, subject, experiment, directory_dataset, output_file, stream_mode, VERBOSE
+    return pipeline, subject, experiment, directory_dataset, output_file, stream_mode, mu_beta_process, VERBOSE
 
 
 def get_epochs(raw):
@@ -151,12 +154,18 @@ def process_with_stream(pipeline, s, experiment, results):
     return results
 
 def process_without_stream(pipeline, s, experiment, directory_dataset, results):
-    raw = load_data(s, experiment, directory_dataset, VERBOSE=VERBOSE)
-    epochs, event_dict, raw = get_epochs(raw)
 
     time_start = time.time()
-    X = epochs.get_data()
-    y = epochs.events[:, -1] - 1
+    
+    if MU_BETA_PROCESS:
+        raw = load_data_one(s, experiment, directory_dataset, VERBOSE=VERBOSE)
+        X, y, epochs = get_X_y_mu_beta(raw)
+    else:
+        raw = load_data_one(s, experiment, directory_dataset, VERBOSE=VERBOSE)
+        epochs, event_dict, raw = get_epochs(raw)
+        X = epochs.get_data()
+        y = epochs.events[:, -1] - 1
+
     y_pred = pipeline.predict(X)
 
     predict_correct = y_pred == y
@@ -185,10 +194,16 @@ if __name__ == "__main__":
     parser.add_argument('-s', '--subject', type=str, help='Subject number, sequence of subjects (separated by comma) or all', required=True)
     parser.add_argument('-m', '--model-path', type=str, help=f'Model path', required=False, default='./output_model/model.joblib')
     parser.add_argument('-d', '--directory-dataset', type=str, help='Directory dataset', required=False, default='../../files')
+    parser.add_argument('-mb', '--mu-beta-process', action='store_true', help='Save model', default=False)
     parser.add_argument('-v', '--verbose', action='store_true', help='Verbose', default=False)
     args = parser.parse_args()
 
-    pipeline, subject, experiment, directory_dataset, output_file, stream_mode, VERBOSE = check_args(args)
+    pipeline, subject, experiment, directory_dataset, output_file, stream_mode, MU_BETA_PROCESS, VERBOSE = check_args(args)
+
+    if MU_BETA_PROCESS and stream_mode:
+        raise ValueError('Mu beta process and stream mode not compatible.')
+
+    print(f"subject = {subject}")
     
     results = []
     for s in subject:
