@@ -1,6 +1,5 @@
 import mne
 from mne.datasets import eegbci
-import numpy as np
 from mne.preprocessing import ICA
 
 def preprocess_data(raw_obj):
