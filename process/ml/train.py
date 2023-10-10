@@ -4,10 +4,8 @@ import joblib
 import numpy as np
 
 import mne
-from mne.io import concatenate_raws, read_raw_edf
-import matplotlib.pyplot as plt
 
-from sklearn.model_selection import cross_validate, cross_val_score, ShuffleSplit, StratifiedKFold
+from sklearn.model_selection import cross_val_score, StratifiedKFold
 from sklearn.pipeline import Pipeline
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.ensemble import RandomForestClassifier

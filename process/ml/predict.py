@@ -1,35 +1,11 @@
 import os
 import base64
-import sys
-import random
 import joblib
 import numpy as np
 import time
 
 import socket
 import mne
-from mne.io import concatenate_raws, read_raw_edf
-import matplotlib.pyplot as plt
-import glob
-
-from sklearn.model_selection import cross_val_score
-from sklearn.pipeline import Pipeline
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
-from sklearn.model_selection import ShuffleSplit, cross_val_score
-from sklearn.ensemble import RandomForestClassifier
-
-
-from sklearn.pipeline import Pipeline
-from sklearn.model_selection import  ShuffleSplit
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.svm import SVC
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.neural_network import MLPClassifier
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from xgboost.sklearn import XGBClassifier
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import cross_validate
-from mne_realtime import LSLClient, MockLSLStream
 import argparse as ap
 from colorama import *
 
