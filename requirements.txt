@@ -1,0 +1,16 @@
+joblib
+numpy
+mne
+scikit-learn
+xgboost
+pyyaml
+colorama
+tensorflow
+pandas
+matplotlib
+lightgbm
+scipy
+numba
+PyWavelets
+git+https://github.com/mne-tools/mne-features.git#egg=mne_features
+PyQt5
