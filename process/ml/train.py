@@ -5,7 +5,7 @@ import numpy as np
 
 import mne
 
-from sklearn.model_selection import cross_val_score, StratifiedKFold
+from sklearn.model_selection import cross_val_score, StratifiedKFold, ShuffleSplit
 from sklearn.pipeline import Pipeline
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.ensemble import RandomForestClassifier
@@ -124,6 +124,7 @@ def get_X_y(raw):
 
 def process_model(X, y, epochs, choosed_decomp_alg, choosed_model, need_calculate_mean, VERBOSE):
     res_accuracy = None
+    # cv = ShuffleSplit(n_splits=5, test_size=0.3, random_state=42)
     cv = StratifiedKFold(n_splits=8, shuffle=True, random_state=42)
     
     if not MU_BETA_PROCESS:
@@ -208,7 +209,8 @@ if __name__ == "__main__":
 
         if save_model and pipeline is not None:
             pipeline = pipeline.fit(X, y)
-            prefix = f'_{e}.joblib' if pack_subj else f'_{e}_{subject[0]}.joblib'
+            prefix = "model"
+            prefix += f'_{e}.joblib' if pack_subj else f'_{e}_{subject[0]}.joblib'
             path = output + prefix
             print(f"[+] Saving model in {path}")
             joblib.dump(pipeline, path)
@@ -225,6 +227,6 @@ if __name__ == "__main__":
         print(f"Mean accuracy of {len(experiment)} experiments: {np.mean(m)}")
 
     if VERBOSE:
-        print("Result file saved in: ./results.json")
+        print(f"Result file saved in: ./{output}/results.json")
         with open(f"{output}results.json", 'w') as f:
             json.dump(results, f)

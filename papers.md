@@ -43,3 +43,4 @@
 - https://medium.com/geekculture/common-spatial-pattern-and-its-applications-in-the-healthcare-industry-faa4311dab79
 - https://en.wikipedia.org/wiki/Common_spatial_pattern
 - https://en.wikipedia.org/wiki/Cross-validation_(statistics)#k-fold_cross-validation
+- https://medium.com/geekculture/cross-validation-techniques-33d389897878

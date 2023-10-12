@@ -43,8 +43,8 @@ There are following directories:
 
 ```
 /process
-  /dl <-- In this directory we can find the scripts used to train and predict the deep learning models
-  /ml <-- In this directory we can find the scripts used to train and predict the machine learning models
+  /dl <-- Contain scripts used to train and predict with deep learning models
+  /ml <-- Contain scripts used to train and predict with machine learning models
 ```
 
 There is usage of the scripts:
