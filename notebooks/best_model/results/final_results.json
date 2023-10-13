@@ -1,0 +1,1396 @@
+[
+  [
+      {
+          "candidate": {
+              "id": "0",
+              "low_cutoff": 7,
+              "high_cutoff": 30,
+              "tmin": -1,
+              "tmax": 3,
+              "ica": false,
+              "notch": false
+          }
+      },
+      {
+          "name": "Gradient Boosting",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__n_estimators": 50
+          },
+          "best_score_": 0.5666666666666667
+      },
+      {
+          "name": "Linear discriminant analysis",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__solver": "svd"
+          },
+          "best_score_": 0.6333333333333334
+      },
+      {
+          "name": "SVM",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__C": 1,
+              "model__kernel": "linear"
+          },
+          "best_score_": 0.5666666666666667
+      },
+      {
+          "name": "KNN",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__n_neighbors": 4
+          },
+          "best_score_": 0.6333333333333333
+      },
+      {
+          "name": "Random Forest",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__n_estimators": 100
+          },
+          "best_score_": 0.4666666666666666
+      },
+      {
+          "name": "MLP",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__hidden_layer_sizes": [
+                  100,
+                  50
+              ]
+          },
+          "best_score_": 0.5000000000000001
+      },
+      {
+          "name": "Decision Tree",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__max_depth": 50
+          },
+          "best_score_": 0.5666666666666667
+      },
+      {
+          "name": "XGB",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__learning_rate": 0.05,
+              "model__n_estimators": 200
+          },
+          "best_score_": 0.5000000000000001
+      }
+  ],
+  [
+      {
+          "candidate": {
+              "id": "1",
+              "low_cutoff": 7,
+              "high_cutoff": 30,
+              "tmin": -1,
+              "tmax": 3,
+              "ica": true,
+              "notch": false
+          }
+      },
+      {
+          "name": "Gradient Boosting",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__n_estimators": 50
+          },
+          "best_score_": 0.5666666666666667
+      },
+      {
+          "name": "Linear discriminant analysis",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__solver": "svd"
+          },
+          "best_score_": 0.6333333333333334
+      },
+      {
+          "name": "SVM",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__C": 1,
+              "model__kernel": "linear"
+          },
+          "best_score_": 0.5666666666666667
+      },
+      {
+          "name": "KNN",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__n_neighbors": 4
+          },
+          "best_score_": 0.6333333333333333
+      },
+      {
+          "name": "Random Forest",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__n_estimators": 100
+          },
+          "best_score_": 0.5000000000000001
+      },
+      {
+          "name": "MLP",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__hidden_layer_sizes": [
+                  200,
+                  100
+              ]
+          },
+          "best_score_": 0.5000000000000001
+      },
+      {
+          "name": "Decision Tree",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__max_depth": 50
+          },
+          "best_score_": 0.7
+      },
+      {
+          "name": "XGB",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__learning_rate": 0.05,
+              "model__n_estimators": 200
+          },
+          "best_score_": 0.5000000000000001
+      }
+  ],
+  [
+      {
+          "candidate": {
+              "id": "2",
+              "low_cutoff": 7,
+              "high_cutoff": 30,
+              "tmin": -1,
+              "tmax": 3,
+              "ica": true,
+              "notch": true
+          }
+      },
+      {
+          "name": "Gradient Boosting",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__n_estimators": 50
+          },
+          "best_score_": 0.5666666666666667
+      },
+      {
+          "name": "Linear discriminant analysis",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__solver": "svd"
+          },
+          "best_score_": 0.6333333333333334
+      },
+      {
+          "name": "SVM",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__C": 1,
+              "model__kernel": "linear"
+          },
+          "best_score_": 0.5666666666666667
+      },
+      {
+          "name": "KNN",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__n_neighbors": 4
+          },
+          "best_score_": 0.6333333333333333
+      },
+      {
+          "name": "Random Forest",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__n_estimators": 100
+          },
+          "best_score_": 0.5333333333333333
+      },
+      {
+          "name": "MLP",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__hidden_layer_sizes": [
+                  100,
+                  50
+              ]
+          },
+          "best_score_": 0.5000000000000001
+      },
+      {
+          "name": "Decision Tree",
+          "best_params_": {
+              "csp__n_components": 20,
+              "model__max_depth": 50
+          },
+          "best_score_": 0.6
+      },
+      {
+          "name": "XGB",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__learning_rate": 0.05,
+              "model__n_estimators": 200
+          },
+          "best_score_": 0.5000000000000001
+      }
+  ],
+  [
+      {
+          "candidate": {
+              "id": "3",
+              "low_cutoff": 4,
+              "high_cutoff": 35,
+              "tmin": -1,
+              "tmax": 3,
+              "ica": true,
+              "notch": false
+          }
+      },
+      {
+          "name": "Gradient Boosting",
+          "best_params_": {
+              "csp__n_components": 7,
+              "model__n_estimators": 100
+          },
+          "best_score_": 0.4666666666666666
+      },
+      {
+          "name": "Linear discriminant analysis",
+          "best_params_": {
+              "csp__n_components": 9,
+              "model__solver": "svd"
+          },
+          "best_score_": 0.6
+      },
+      {
+          "name": "SVM",
+          "best_params_": {
+              "csp__n_components": 9,
+              "model__C": 3,
+              "model__kernel": "linear"
+          },
+          "best_score_": 0.4333333333333333
+      },
+      {
+          "name": "KNN",
+          "best_params_": {
+              "csp__n_components": 9,
+              "model__n_neighbors": 4
+          },
+          "best_score_": 0.5000000000000001
+      },
+      {
+          "name": "Random Forest",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__n_estimators": 100
+          },
+          "best_score_": 0.4
+      },
+      {
+          "name": "MLP",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__hidden_layer_sizes": [
+                  200,
+                  100
+              ]
+          },
+          "best_score_": 0.39999999999999997
+      },
+      {
+          "name": "Decision Tree",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__max_depth": 100
+          },
+          "best_score_": 0.5
+      },
+      {
+          "name": "XGB",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__learning_rate": 0.05,
+              "model__n_estimators": 200
+          },
+          "best_score_": 0.4333333333333333
+      }
+  ],
+  [
+      {
+          "candidate": {
+              "id": "4",
+              "low_cutoff": 4,
+              "high_cutoff": 35,
+              "tmin": -1,
+              "tmax": 3,
+              "ica": true,
+              "notch": true
+          }
+      },
+      {
+          "name": "Gradient Boosting",
+          "best_params_": {
+              "csp__n_components": 7,
+              "model__n_estimators": 50
+          },
+          "best_score_": 0.4666666666666666
+      },
+      {
+          "name": "Linear discriminant analysis",
+          "best_params_": {
+              "csp__n_components": 9,
+              "model__solver": "svd"
+          },
+          "best_score_": 0.6
+      },
+      {
+          "name": "SVM",
+          "best_params_": {
+              "csp__n_components": 9,
+              "model__C": 3,
+              "model__kernel": "linear"
+          },
+          "best_score_": 0.4333333333333333
+      },
+      {
+          "name": "KNN",
+          "best_params_": {
+              "csp__n_components": 9,
+              "model__n_neighbors": 4
+          },
+          "best_score_": 0.5000000000000001
+      },
+      {
+          "name": "Random Forest",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__n_estimators": 100
+          },
+          "best_score_": 0.4666666666666666
+      },
+      {
+          "name": "MLP",
+          "best_params_": {
+              "csp__n_components": 9,
+              "model__hidden_layer_sizes": [
+                  100,
+                  50
+              ]
+          },
+          "best_score_": 0.4
+      },
+      {
+          "name": "Decision Tree",
+          "best_params_": {
+              "csp__n_components": 7,
+              "model__max_depth": 100
+          },
+          "best_score_": 0.4666666666666666
+      },
+      {
+          "name": "XGB",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__learning_rate": 0.05,
+              "model__n_estimators": 200
+          },
+          "best_score_": 0.4333333333333333
+      }
+  ],
+  [
+      {
+          "candidate": {
+              "id": "5",
+              "low_cutoff": 15,
+              "high_cutoff": 40,
+              "tmin": -1,
+              "tmax": 4,
+              "ica": true,
+              "notch": true
+          }
+      },
+      {
+          "name": "Gradient Boosting",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__n_estimators": 100
+          },
+          "best_score_": 0.6666666666666666
+      },
+      {
+          "name": "Linear discriminant analysis",
+          "best_params_": {
+              "csp__n_components": 10,
+              "model__solver": "svd"
+          },
+          "best_score_": 0.6333333333333333
+      },
+      {
+          "name": "SVM",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__C": 3,
+              "model__kernel": "linear"
+          },
+          "best_score_": 0.5
+      },
+      {
+          "name": "KNN",
+          "best_params_": {
+              "csp__n_components": 20,
+              "model__n_neighbors": 4
+          },
+          "best_score_": 0.5333333333333333
+      },
+      {
+          "name": "Random Forest",
+          "best_params_": {
+              "csp__n_components": 50,
+              "model__n_estimators": 50
+          },
+          "best_score_": 0.5
+      },
+      {
+          "name": "MLP",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__hidden_layer_sizes": [
+                  200,
+                  100
+              ]
+          },
+          "best_score_": 0.5333333333333334
+      },
+      {
+          "name": "Decision Tree",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__max_depth": 100
+          },
+          "best_score_": 0.7333333333333334
+      },
+      {
+          "name": "XGB",
+          "best_params_": {
+              "csp__n_components": 20,
+              "model__learning_rate": 0.05,
+              "model__n_estimators": 200
+          },
+          "best_score_": 0.4666666666666666
+      }
+  ],
+  [
+      {
+          "candidate": {
+              "id": "6",
+              "low_cutoff": 15,
+              "high_cutoff": 40,
+              "tmin": -1,
+              "tmax": 4,
+              "ica": false,
+              "notch": true
+          }
+      },
+      {
+          "name": "Gradient Boosting",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__n_estimators": 100
+          },
+          "best_score_": 0.6333333333333334
+      },
+      {
+          "name": "Linear discriminant analysis",
+          "best_params_": {
+              "csp__n_components": 10,
+              "model__solver": "svd"
+          },
+          "best_score_": 0.6333333333333333
+      },
+      {
+          "name": "SVM",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__C": 3,
+              "model__kernel": "linear"
+          },
+          "best_score_": 0.5
+      },
+      {
+          "name": "KNN",
+          "best_params_": {
+              "csp__n_components": 20,
+              "model__n_neighbors": 4
+          },
+          "best_score_": 0.5333333333333333
+      },
+      {
+          "name": "Random Forest",
+          "best_params_": {
+              "csp__n_components": 20,
+              "model__n_estimators": 50
+          },
+          "best_score_": 0.5
+      },
+      {
+          "name": "MLP",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__hidden_layer_sizes": [
+                  100,
+                  50
+              ]
+          },
+          "best_score_": 0.5
+      },
+      {
+          "name": "Decision Tree",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__max_depth": 50
+          },
+          "best_score_": 0.6333333333333333
+      },
+      {
+          "name": "XGB",
+          "best_params_": {
+              "csp__n_components": 20,
+              "model__learning_rate": 0.05,
+              "model__n_estimators": 200
+          },
+          "best_score_": 0.4666666666666666
+      }
+  ],
+  [
+      {
+          "candidate": {
+              "id": "7",
+              "low_cutoff": 8,
+              "high_cutoff": 40,
+              "tmin": -0.5,
+              "tmax": 4,
+              "ica": false,
+              "notch": false
+          }
+      },
+      {
+          "name": "Gradient Boosting",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__n_estimators": 50
+          },
+          "best_score_": 0.6666666666666667
+      },
+      {
+          "name": "Linear discriminant analysis",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__solver": "svd"
+          },
+          "best_score_": 0.8666666666666668
+      },
+      {
+          "name": "SVM",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__C": 3,
+              "model__kernel": "linear"
+          },
+          "best_score_": 0.7666666666666667
+      },
+      {
+          "name": "KNN",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__n_neighbors": 4
+          },
+          "best_score_": 0.7666666666666667
+      },
+      {
+          "name": "Random Forest",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__n_estimators": 100
+          },
+          "best_score_": 0.7333333333333334
+      },
+      {
+          "name": "MLP",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__hidden_layer_sizes": [
+                  200,
+                  100
+              ]
+          },
+          "best_score_": 0.7333333333333333
+      },
+      {
+          "name": "Decision Tree",
+          "best_params_": {
+              "csp__n_components": 10,
+              "model__max_depth": 100
+          },
+          "best_score_": 0.7333333333333334
+      },
+      {
+          "name": "XGB",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__learning_rate": 0.05,
+              "model__n_estimators": 200
+          },
+          "best_score_": 0.7
+      }
+  ],
+  [
+      {
+          "candidate": {
+              "id": "8",
+              "low_cutoff": 8,
+              "high_cutoff": 40,
+              "tmin": -0.5,
+              "tmax": 4,
+              "ica": true,
+              "notch": false
+          }
+      },
+      {
+          "name": "Gradient Boosting",
+          "best_params_": {
+              "csp__n_components": 7,
+              "model__n_estimators": 50
+          },
+          "best_score_": 0.7
+      },
+      {
+          "name": "Linear discriminant analysis",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__solver": "svd"
+          },
+          "best_score_": 0.8666666666666668
+      },
+      {
+          "name": "SVM",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__C": 3,
+              "model__kernel": "linear"
+          },
+          "best_score_": 0.7666666666666667
+      },
+      {
+          "name": "KNN",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__n_neighbors": 4
+          },
+          "best_score_": 0.7666666666666667
+      },
+      {
+          "name": "Random Forest",
+          "best_params_": {
+              "csp__n_components": 8,
+              "model__n_estimators": 50
+          },
+          "best_score_": 0.7666666666666666
+      },
+      {
+          "name": "MLP",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__hidden_layer_sizes": [
+                  200,
+                  100
+              ]
+          },
+          "best_score_": 0.7333333333333333
+      },
+      {
+          "name": "Decision Tree",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__max_depth": 50
+          },
+          "best_score_": 0.7
+      },
+      {
+          "name": "XGB",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__learning_rate": 0.05,
+              "model__n_estimators": 200
+          },
+          "best_score_": 0.7
+      }
+  ],
+  [
+      {
+          "candidate": {
+              "id": "9",
+              "low_cutoff": 8,
+              "high_cutoff": 40,
+              "tmin": -0.5,
+              "tmax": 4,
+              "ica": true,
+              "notch": true
+          }
+      },
+      {
+          "name": "Gradient Boosting",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__n_estimators": 100
+          },
+          "best_score_": 0.6666666666666667
+      },
+      {
+          "name": "Linear discriminant analysis",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__solver": "svd"
+          },
+          "best_score_": 0.8666666666666668
+      },
+      {
+          "name": "SVM",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__C": 3,
+              "model__kernel": "linear"
+          },
+          "best_score_": 0.7666666666666667
+      },
+      {
+          "name": "KNN",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__n_neighbors": 4
+          },
+          "best_score_": 0.7666666666666667
+      },
+      {
+          "name": "Random Forest",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__n_estimators": 100
+          },
+          "best_score_": 0.7666666666666667
+      },
+      {
+          "name": "MLP",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__hidden_layer_sizes": [
+                  200,
+                  100
+              ]
+          },
+          "best_score_": 0.7333333333333333
+      },
+      {
+          "name": "Decision Tree",
+          "best_params_": {
+              "csp__n_components": 8,
+              "model__max_depth": 100
+          },
+          "best_score_": 0.7
+      },
+      {
+          "name": "XGB",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__learning_rate": 0.05,
+              "model__n_estimators": 200
+          },
+          "best_score_": 0.7
+      }
+  ],
+  [
+      {
+          "candidate": {
+              "id": "10",
+              "low_cutoff": 8,
+              "high_cutoff": 40,
+              "tmin": -0.5,
+              "tmax": 4,
+              "ica": false,
+              "notch": true
+          }
+      },
+      {
+          "name": "Gradient Boosting",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__n_estimators": 100
+          },
+          "best_score_": 0.6666666666666667
+      },
+      {
+          "name": "Linear discriminant analysis",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__solver": "svd"
+          },
+          "best_score_": 0.8666666666666668
+      },
+      {
+          "name": "SVM",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__C": 3,
+              "model__kernel": "linear"
+          },
+          "best_score_": 0.7666666666666667
+      },
+      {
+          "name": "KNN",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__n_neighbors": 4
+          },
+          "best_score_": 0.7666666666666667
+      },
+      {
+          "name": "Random Forest",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__n_estimators": 50
+          },
+          "best_score_": 0.6666666666666667
+      },
+      {
+          "name": "MLP",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__hidden_layer_sizes": [
+                  200,
+                  100
+              ]
+          },
+          "best_score_": 0.7333333333333333
+      },
+      {
+          "name": "Decision Tree",
+          "best_params_": {
+              "csp__n_components": 8,
+              "model__max_depth": 100
+          },
+          "best_score_": 0.7333333333333334
+      },
+      {
+          "name": "XGB",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__learning_rate": 0.05,
+              "model__n_estimators": 200
+          },
+          "best_score_": 0.7
+      }
+  ],
+  [
+      {
+          "candidate": {
+              "id": "11",
+              "low_cutoff": 8,
+              "high_cutoff": 40,
+              "tmin": -1,
+              "tmax": 4,
+              "ica": false,
+              "notch": false
+          }
+      },
+      {
+          "name": "Gradient Boosting",
+          "best_params_": {
+              "csp__n_components": 50,
+              "model__n_estimators": 50
+          },
+          "best_score_": 0.5333333333333333
+      },
+      {
+          "name": "Linear discriminant analysis",
+          "best_params_": {
+              "csp__n_components": 15,
+              "model__solver": "svd"
+          },
+          "best_score_": 0.6
+      },
+      {
+          "name": "SVM",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__C": 3,
+              "model__kernel": "linear"
+          },
+          "best_score_": 0.5666666666666667
+      },
+      {
+          "name": "KNN",
+          "best_params_": {
+              "csp__n_components": 7,
+              "model__n_neighbors": 6
+          },
+          "best_score_": 0.7
+      },
+      {
+          "name": "Random Forest",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__n_estimators": 100
+          },
+          "best_score_": 0.5333333333333334
+      },
+      {
+          "name": "MLP",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__hidden_layer_sizes": [
+                  200,
+                  100
+              ]
+          },
+          "best_score_": 0.5
+      },
+      {
+          "name": "Decision Tree",
+          "best_params_": {
+              "csp__n_components": 7,
+              "model__max_depth": 100
+          },
+          "best_score_": 0.5333333333333333
+      },
+      {
+          "name": "XGB",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__learning_rate": 0.05,
+              "model__n_estimators": 200
+          },
+          "best_score_": 0.5333333333333333
+      }
+  ],
+  [
+      {
+          "candidate": {
+              "id": "12",
+              "low_cutoff": 8,
+              "high_cutoff": 40,
+              "tmin": -1,
+              "tmax": 4,
+              "ica": true,
+              "notch": false
+          }
+      },
+      {
+          "name": "Gradient Boosting",
+          "best_params_": {
+              "csp__n_components": 50,
+              "model__n_estimators": 100
+          },
+          "best_score_": 0.5333333333333333
+      },
+      {
+          "name": "Linear discriminant analysis",
+          "best_params_": {
+              "csp__n_components": 15,
+              "model__solver": "svd"
+          },
+          "best_score_": 0.6
+      },
+      {
+          "name": "SVM",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__C": 3,
+              "model__kernel": "linear"
+          },
+          "best_score_": 0.5666666666666667
+      },
+      {
+          "name": "KNN",
+          "best_params_": {
+              "csp__n_components": 7,
+              "model__n_neighbors": 6
+          },
+          "best_score_": 0.7
+      },
+      {
+          "name": "Random Forest",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__n_estimators": 50
+          },
+          "best_score_": 0.5666666666666667
+      },
+      {
+          "name": "MLP",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__hidden_layer_sizes": [
+                  100,
+                  50
+              ]
+          },
+          "best_score_": 0.5
+      },
+      {
+          "name": "Decision Tree",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__max_depth": 50
+          },
+          "best_score_": 0.5333333333333333
+      },
+      {
+          "name": "XGB",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__learning_rate": 0.05,
+              "model__n_estimators": 200
+          },
+          "best_score_": 0.5333333333333333
+      }
+  ],
+  [
+      {
+          "candidate": {
+              "id": "13",
+              "low_cutoff": 8,
+              "high_cutoff": 40,
+              "tmin": -1,
+              "tmax": 4,
+              "ica": false,
+              "notch": true
+          }
+      },
+      {
+          "name": "Gradient Boosting",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__n_estimators": 100
+          },
+          "best_score_": 0.5333333333333333
+      },
+      {
+          "name": "Linear discriminant analysis",
+          "best_params_": {
+              "csp__n_components": 15,
+              "model__solver": "svd"
+          },
+          "best_score_": 0.6
+      },
+      {
+          "name": "SVM",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__C": 3,
+              "model__kernel": "linear"
+          },
+          "best_score_": 0.5666666666666667
+      },
+      {
+          "name": "KNN",
+          "best_params_": {
+              "csp__n_components": 7,
+              "model__n_neighbors": 6
+          },
+          "best_score_": 0.7
+      },
+      {
+          "name": "Random Forest",
+          "best_params_": {
+              "csp__n_components": 7,
+              "model__n_estimators": 100
+          },
+          "best_score_": 0.4666666666666666
+      },
+      {
+          "name": "MLP",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__hidden_layer_sizes": [
+                  100,
+                  50
+              ]
+          },
+          "best_score_": 0.5
+      },
+      {
+          "name": "Decision Tree",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__max_depth": 100
+          },
+          "best_score_": 0.5333333333333333
+      },
+      {
+          "name": "XGB",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__learning_rate": 0.05,
+              "model__n_estimators": 200
+          },
+          "best_score_": 0.5333333333333333
+      }
+  ],
+  [
+      {
+          "candidate": {
+              "id": "14",
+              "low_cutoff": 8,
+              "high_cutoff": 40,
+              "tmin": -1,
+              "tmax": 4,
+              "ica": true,
+              "notch": true
+          }
+      },
+      {
+          "name": "Gradient Boosting",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__n_estimators": 50
+          },
+          "best_score_": 0.5
+      },
+      {
+          "name": "Linear discriminant analysis",
+          "best_params_": {
+              "csp__n_components": 15,
+              "model__solver": "svd"
+          },
+          "best_score_": 0.6
+      },
+      {
+          "name": "SVM",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__C": 3,
+              "model__kernel": "linear"
+          },
+          "best_score_": 0.5666666666666667
+      },
+      {
+          "name": "KNN",
+          "best_params_": {
+              "csp__n_components": 7,
+              "model__n_neighbors": 6
+          },
+          "best_score_": 0.7
+      },
+      {
+          "name": "Random Forest",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__n_estimators": 50
+          },
+          "best_score_": 0.5
+      },
+      {
+          "name": "MLP",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__hidden_layer_sizes": [
+                  200,
+                  100
+              ]
+          },
+          "best_score_": 0.5
+      },
+      {
+          "name": "Decision Tree",
+          "best_params_": {
+              "csp__n_components": 7,
+              "model__max_depth": 50
+          },
+          "best_score_": 0.5333333333333333
+      },
+      {
+          "name": "XGB",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__learning_rate": 0.05,
+              "model__n_estimators": 200
+          },
+          "best_score_": 0.5333333333333333
+      }
+  ],
+  [
+      {
+          "candidate": {
+              "id": "15",
+              "low_cutoff": 10,
+              "high_cutoff": 40,
+              "tmin": -1,
+              "tmax": 4,
+              "ica": false,
+              "notch": true
+          }
+      },
+      {
+          "name": "Gradient Boosting",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__n_estimators": 100
+          },
+          "best_score_": 0.7333333333333333
+      },
+      {
+          "name": "Linear discriminant analysis",
+          "best_params_": {
+              "csp__n_components": 10,
+              "model__solver": "svd"
+          },
+          "best_score_": 0.6333333333333333
+      },
+      {
+          "name": "SVM",
+          "best_params_": {
+              "csp__n_components": 8,
+              "model__C": 1,
+              "model__kernel": "linear"
+          },
+          "best_score_": 0.6333333333333334
+      },
+      {
+          "name": "KNN",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__n_neighbors": 4
+          },
+          "best_score_": 0.7333333333333333
+      },
+      {
+          "name": "Random Forest",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__n_estimators": 100
+          },
+          "best_score_": 0.6
+      },
+      {
+          "name": "MLP",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__hidden_layer_sizes": [
+                  200,
+                  100
+              ]
+          },
+          "best_score_": 0.5333333333333333
+      },
+      {
+          "name": "Decision Tree",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__max_depth": 50
+          },
+          "best_score_": 0.7666666666666667
+      },
+      {
+          "name": "XGB",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__learning_rate": 0.05,
+              "model__n_estimators": 200
+          },
+          "best_score_": 0.7
+      }
+  ],
+  [
+      {
+          "candidate": {
+              "id": "16",
+              "low_cutoff": 10,
+              "high_cutoff": 40,
+              "tmin": -1,
+              "tmax": 4,
+              "ica": true,
+              "notch": true
+          }
+      },
+      {
+          "name": "Gradient Boosting",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__n_estimators": 100
+          },
+          "best_score_": 0.7333333333333333
+      },
+      {
+          "name": "Linear discriminant analysis",
+          "best_params_": {
+              "csp__n_components": 10,
+              "model__solver": "svd"
+          },
+          "best_score_": 0.6333333333333333
+      },
+      {
+          "name": "SVM",
+          "best_params_": {
+              "csp__n_components": 8,
+              "model__C": 1,
+              "model__kernel": "linear"
+          },
+          "best_score_": 0.6333333333333334
+      },
+      {
+          "name": "KNN",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__n_neighbors": 4
+          },
+          "best_score_": 0.7333333333333333
+      },
+      {
+          "name": "Random Forest",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__n_estimators": 50
+          },
+          "best_score_": 0.6
+      },
+      {
+          "name": "MLP",
+          "best_params_": {
+              "csp__n_components": 6,
+              "model__hidden_layer_sizes": [
+                  100,
+                  50
+              ]
+          },
+          "best_score_": 0.5333333333333333
+      },
+      {
+          "name": "Decision Tree",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__max_depth": 100
+          },
+          "best_score_": 0.7333333333333333
+      },
+      {
+          "name": "XGB",
+          "best_params_": {
+              "csp__n_components": 5,
+              "model__learning_rate": 0.05,
+              "model__n_estimators": 200
+          },
+          "best_score_": 0.7
+      }
+  ]
+]
