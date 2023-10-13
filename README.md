@@ -1,5 +1,3 @@
-
-
 <div align="center">
   <picture>
     <source width="650px" media="(prefers-color-scheme: dark)" srcset="./assets/dark.svg">
