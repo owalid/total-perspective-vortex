@@ -68,4 +68,4 @@ def preprocess_raw(raw, type_training):
     tmax = 4.5  # Time after event in seconds
     epochs = mne.Epochs(raw, events, event_dict, tmin, tmax, proj=True, picks=picks, baseline=None, preload=True)
 
-    return raw, events, event_dict, picks, epochs
+    return raw, epochs

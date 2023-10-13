@@ -1,10 +1,18 @@
-# total-perspective-vortex
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./assets/dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="./assets/light.svg">
+    <img src="assets/light.svg">
+  </picture>
+</div>
 
 [![wakatime](https://wakatime.com/badge/user/57a746b4-0744-4dc9-a0f3-61d9ea529bde/project/6f3d6c65-19f8-4e7a-b934-3fb1e3b0cd26.svg)](https://wakatime.com/badge/user/57a746b4-0744-4dc9-a0f3-61d9ea529bde/project/6f3d6c65-19f8-4e7a-b934-3fb1e3b0cd26)
 
 # Description
 
 This project aims to classify states from EEG data acquired from PhysioNet. The primary goal is to design an accurate classification system using decomposition algorithms and machine learning techniques.
+
+[Link of dataset](https://physionet.org/content/eegmmidb/1.0.0/)
 
 ## Decomposition algorithm
 
@@ -45,6 +53,7 @@ There are following directories:
 /process
   /dl <-- Contain scripts used to train and predict with deep learning models
   /ml <-- Contain scripts used to train and predict with machine learning models
+  analyze_train_result.py <-- Script used to analyze the results of the training from json file
 ```
 
 There is usage of the scripts:
@@ -184,11 +193,17 @@ The preprocessing steps are as follows:
 
 The following table summarizes the results of the three best models for one subject with experiment `hands_vs_feet`:
 
-| Model                              | Accuracy |
-|------------------------------------|---------|
-| Linear discriminant analysis (LDA)  | 0.86    |
-| Decision tree                       | 0.76    |
-| K-nearest neighbors (KNN)           | 0.70    |
+| Model                          | Accuracy | Best Parameters                                               |
+|--------------------------------|----------|---------------------------------------------------------------|
+| Linear discriminant analysis   | 0.86     | {'csp__n_components': 5, 'model__solver': 'svd', 'model__tol': 0.0001} |
+| SVM                            | 0.81     | {'csp__n_components': 20, 'model__C': 3, 'model__kernel': 'linear'} |
+| KNN                            | 0.79     | {'csp__n_components': 5, 'model__n_neighbors': 4}            |
+| XGB                            | 0.76     | {'csp__n_components': 6, 'model__learning_rate': 0.001, 'model__n_estimators': 200} |
+| MLP                            | 0.76     | {'csp__n_components': 5, 'model__hidden_layer_sizes': (200, 100)} |
+| Random Forest                  | 0.76     | {'csp__n_components': 8, 'model__n_estimators': 100}          |
+| Gradient Boosting              | 0.74     | {'csp__n_components': 7, 'model__n_estimators': 100}          |
+| Decision Tree                  | 0.74     | {'csp__n_components': 6, 'model__max_depth': 100}            |
+
 
 The following table summarizes the results of the bests models for all subjects with mean accurracy of all experiments:
 
@@ -235,11 +250,12 @@ We have use the following features for the machine learning models:
 
 The following table summarizes the machine learning results:
 
-| Model                              | Accuracy |
-|------------------------------------|----------|
-| Linear discriminant analysis (LDA) | 0.57     |
-| SVM                                | 0.47     |
-| KNN                                | 0.38     |
+| Model                          | Accuracy | Best Parameters                            |
+|--------------------------------|----------|--------------------------------------------|
+| Linear discriminant analysis   | 0.57     | {'model__solver': 'svd', 'model__tol': 0.0001} |
+| SVM                            | 0.47     | {'model__C': 3, 'model__kernel': 'linear'} |
+| KNN                            | 0.38     | {'model__n_neighbors': 4}                  |
+
 
 
 With mne-feature we have use the following features for the machine learning models:
@@ -254,11 +270,11 @@ With mne-feature we have use the following features for the machine learning mod
 
 The following table summarizes the machine learning results:
 
-| Model                              | Accuracy |
-|------------------------------------|----------|
-| Linear discriminant analysis (LDA) | 0.50     |
-| SVM                                | 0.42     |
-| KNN                                | 0.42     |
+| Model                          | Accuracy | Best Parameters                            |
+|--------------------------------|----------|--------------------------------------------|
+| Linear discriminant analysis   | 0.50     | {'model__solver': 'svd', 'model__tol': 0.0001} |
+| SVM                            | 0.42     | {'model__C': 0.5, 'model__kernel': 'linear'} |
+| KNN                            | 0.42     | {'model__n_neighbors': 5}                  |
 
 
 Based on this [paper](https://arxiv.org/ftp/arxiv/papers/1312/1312.2877.pdf) I have try to improve the results of the classification of the mandatory part.
@@ -284,10 +300,11 @@ From this independent components I have able to calculate the `activation_vector
 
 The following table summarizes the results of the three best models for one subject with experiment `hands_vs_feet`:
 
-| Model         | Accuracy |
-|---------------|----------|
-| Decision Tree | 0.81     |
-| MLP           | 0.54     |
+| Model                          | Accuracy | Best Parameters                                    |
+|--------------------------------|----------|----------------------------------------------------|
+| Decision Tree                  | 0.81     | {'model__max_depth': 5, 'model__min_samples_split': 2} |
+| MLP                            | 0.54     | {'model__hidden_layer_sizes': (200, 100), 'model__max_iter': 5000} |
+
 
 
 The following table summarizes the results of the best model for all subjects with mean accurracy of all experiments:
@@ -307,45 +324,92 @@ The main drawback of this training is the training time, which needs to be tripl
 
 ### MNIST Brain Digits
 
+[Link of dataset](http://mindbigdata.com/opendb/index.html)
+
 I have try to train with the MNIST Brain Digits dataset. I have try to predict the digit class (0-9).
 
-| Model         | Accuracy |
-|---------------|----------|
-| Random Forest | 0.25     |
-| SVM           | 0.23     |
-| MLP           | 0.23     |
-| Decision Tree | 0.20     |
-| KKN           | 0.19     |
+| Model                          | Accuracy | Best Parameters                            |
+|--------------------------------|----------|--------------------------------------------|
+| Random Forest                  | 0.25     | {'model__n_estimators': 100}               |
+| SVM                            | 0.23     | {'model__C': 0.5, 'model__kernel': 'linear'}|
+| MLP                            | 0.23     | {'model__hidden_layer_sizes': (200, 100)}  |
+| KNN                            | 0.19     | {'model__n_neighbors': 6}                  |
+| Decision Tree                  | 0.20     | {'model__max_depth': 50}                   |
+
 
 
 When I see the bad results I have try to predict if the digit is even, odd or a digit.
 
-| Model             | Accuracy |
-|-------------------|----------|
-| Random Forest     | 0.51     |
-| XGB               | 0.51     |
-| MLP               | 0.50     |
-| Gradient Boosting | 0.49     |
-| KKN               | 0.48     |
-| Decision Tree     | 0.45     |
-| LDA               | 0.38     |
+| Model                          | Accuracy | Best Parameters                                  |
+|--------------------------------|----------|--------------------------------------------------|
+| Random Forest                  | 0.51     | {'model__n_estimators': 100}                     |
+| XGB                            | 0.51     | {'model__learning_rate': 0.05, 'model__n_estimators': 200} |
+| MLP                            | 0.50     | {'model__hidden_layer_sizes': (200, 100)}        |
+| Gradient Boosting              | 0.49     | {'model__n_estimators': 100}                     |
+| KNN                            | 0.48     | {'model__n_neighbors': 5}                        |
+| Decision Tree                  | 0.45     | {'model__max_depth': 100}                        |
+| Linear discriminant analysis   | 0.38     | {'model__solver': 'lsqr', 'model__tol': 0.0001}  |
+
 
 And after that I have try to predict if the digit is a digit or not.
 
-| Model             | Accuracy |
-|-------------------|----------|
-| Random Forest     | 0.87     |
-| Gradient Boosting | 0.85     |
-| XGB               | 0.85     |
-| SVM               | 0.75     |
-| Decision Tree     | 0.80     |
-| KKN               | 0.82     |
-| LDA               | 0.76     |
-| MLP               | 0.70     |
+| Model                          | Accuracy | Best Parameters                            |
+|--------------------------------|----------|--------------------------------------------|
+| Random Forest                  | 0.87     | {'model__n_estimators': 100}               |
+| KNN                            | 0.82     | {'model__n_neighbors': 5}                  |
+| Decision Tree                  | 0.80     | {'model__max_depth': 50}                   |
+| SVM                            | 0.75     | {'model__C': 3, 'model__kernel': 'linear'}|
+| MLP                            | 0.70     | {'model__hidden_layer_sizes': (100, 50)}  |
 
 
 I have also try to used the deep learning for this dataset but I have not good results.
 
+
+### Sleep-EDF Database Expanded
+
+[Link of dataset](https://physionet.org/content/sleep-edfx/1.0.0/)
+
+I have try to train with the Sleep-EDF Database Expanded dataset. I have try to predict the sleep stage (N1, N2, N3, N4, REM, Wake).
+
+
+| Model                          | Accuracy | Best Parameters                                               |
+|--------------------------------|----------|---------------------------------------------------------------|
+| MLP                            | 0.37     | {'csp__n_components': 7, 'model__hidden_layer_sizes': (100, 50)} |
+| SVM                            | 0.36     | {'csp__n_components': 5, 'model__C': 1, 'model__kernel': 'linear'} |
+| KNN                            | 0.34     | {'csp__n_components': 5, 'model__n_neighbors': 5}            |
+| Linear discriminant analysis   | 0.33     | {'csp__n_components': 5, 'model__solver': 'svd', 'model__tol': 0.0001} |
+| Random Forest                  | 0.32     | {'csp__n_components': 30, 'model__n_estimators': 100}        |
+| Gradient Boosting              | 0.30     | {'csp__n_components': 5, 'model__n_estimators': 50}          |
+| Decision Tree                  | 0.29     | {'csp__n_components': 8, 'model__max_depth': 50}           |
+
+
+
+With binary classification (Sleep or Wake):
+
+
+| Model                          | Accuracy | Best Parameters                                               |
+|--------------------------------|----------|---------------------------------------------------------------|
+| KNN                            | 0.90     | {'csp__n_components': 5, 'model__n_neighbors': 5}            |
+| Random Forest                  | 0.90     | {'csp__n_components': 30, 'model__n_estimators': 100}        |
+| MLP                            | 0.90     | {'csp__n_components': 40, 'model__hidden_layer_sizes': (100, 50)} |
+| Gradient Boosting              | 0.89     | {'csp__n_components': 6, 'model__n_estimators': 50}          |
+| Linear discriminant analysis   | 0.89     | {'csp__n_components': 5, 'model__solver': 'svd', 'model__tol': 0.0001} |
+| SVM                            | 0.89     | {'csp__n_components': 5, 'model__C': 1, 'model__kernel': 'linear'} |
+| Decision Tree                  | 0.87     | {'csp__n_components': 10, 'model__max_depth': 100}           |
+
+With classification (Sleep, REM, Wake):
+
+| Model                          | Accuracy | Best Parameters                                               |
+|--------------------------------|----------|---------------------------------------------------------------|
+| Linear discriminant analysis   | 0.81     | {'csp__n_components': 5, 'model__solver': 'lsqr', 'model__tol': 0.0001} |
+| SVM                            | 0.81     | {'csp__n_components': 5, 'model__C': 3, 'model__kernel': 'linear'} |
+| KNN                            | 0.81     | {'csp__n_components': 5, 'model__n_neighbors': 5}            |
+| Random Forest                  | 0.81     | {'csp__n_components': 5, 'model__n_estimators': 50}          |
+| MLP                            | 0.81     | {'csp__n_components': 5, 'model__hidden_layer_sizes': (100, 50)} |
+| Gradient Boosting              | 0.78     | {'csp__n_components': 6, 'model__n_estimators': 50}          |
+| Decision Tree                  | 0.75     | {'csp__n_components': 15, 'model__max_depth': 50}           |
+
+
 # Annexes
 
-[Sources and papers](papers.md)
+[Sources and papers](sources_papers.md)

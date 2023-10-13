@@ -124,8 +124,8 @@ def get_X_y(raw):
 
 def process_model(X, y, epochs, choosed_decomp_alg, choosed_model, need_calculate_mean, VERBOSE):
     res_accuracy = None
-    # cv = ShuffleSplit(n_splits=5, test_size=0.3, random_state=42)
-    cv = StratifiedKFold(n_splits=8, shuffle=True, random_state=42)
+    cv = ShuffleSplit(n_splits=10, test_size=0.2, random_state=42)
+    # cv = StratifiedKFold(n_splits=15, shuffle=True, random_state=42)
     
     if not MU_BETA_PROCESS:
         scaler = mne.decoding.Scaler(epochs.info) # Standardize channel data.
