@@ -1,13 +1,14 @@
 
-[![wakatime](https://wakatime.com/badge/user/57a746b4-0744-4dc9-a0f3-61d9ea529bde/project/6f3d6c65-19f8-4e7a-b934-3fb1e3b0cd26.svg)](https://wakatime.com/badge/user/57a746b4-0744-4dc9-a0f3-61d9ea529bde/project/6f3d6c65-19f8-4e7a-b934-3fb1e3b0cd26)
 
 <div align="center">
   <picture>
-    <source width="750px" media="(prefers-color-scheme: dark)" srcset="./assets/dark.svg">
-    <source width="750px" media="(prefers-color-scheme: light)" srcset="./assets/light.svg">
+    <source width="650px" media="(prefers-color-scheme: dark)" srcset="./assets/dark.svg">
+    <source width="650px" media="(prefers-color-scheme: light)" srcset="./assets/light.svg">
     <img src="assets/light.svg">
   </picture>
 </div>
+
+[![wakatime](https://wakatime.com/badge/user/57a746b4-0744-4dc9-a0f3-61d9ea529bde/project/6f3d6c65-19f8-4e7a-b934-3fb1e3b0cd26.svg)](https://wakatime.com/badge/user/57a746b4-0744-4dc9-a0f3-61d9ea529bde/project/6f3d6c65-19f8-4e7a-b934-3fb1e3b0cd26)
 
 # Description
 
