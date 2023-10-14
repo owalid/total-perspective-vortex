@@ -102,10 +102,12 @@ if __name__ == "__main__":
     model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, validation_data=(X_test, y_test),  shuffle=False, verbose=1 if VERBOSE else 0)
     loss, accuracy = model.evaluate(X_test, y_test, verbose=1 if VERBOSE else 0)
 
+    print(f'Accuracy: {accuracy}')
     if VERBOSE:
-        print(f'Accuracy: {accuracy}')
         print(f'Loss: {loss}')
 
     if save_model:
+        print(f"Your model is saved at {output}")
         model.save(output)
+
 

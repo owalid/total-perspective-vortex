@@ -108,6 +108,9 @@ def check_args(args):
     if not os.path.exists(dir_output) and dir_output != '':
         raise ValueError(f'Output directory path not valid: {output}')
     
+    if dir_output[-1] == '/':
+        dir_output = dir_output[:-1]
+    
     return model_name, choosed_model, decomp_alg, choosed_decomp_alg, subject, experiment, output, save_model, directory_dataset, pack_subj, mu_beta_process, verbose
 
 def get_X_y(raw):
@@ -124,8 +127,8 @@ def get_X_y(raw):
 
 def process_model(X, y, epochs, choosed_decomp_alg, choosed_model, need_calculate_mean, VERBOSE):
     res_accuracy = None
-    cv = ShuffleSplit(n_splits=10, test_size=0.2, random_state=42)
-    # cv = StratifiedKFold(n_splits=15, shuffle=True, random_state=42)
+    # cv = ShuffleSplit(n_splits=10, test_size=0.2, random_state=42)
+    cv = StratifiedKFold(n_splits=8, shuffle=True, random_state=42)
     
     if not MU_BETA_PROCESS:
         scaler = mne.decoding.Scaler(epochs.info) # Standardize channel data.
@@ -158,7 +161,7 @@ if __name__ == "__main__":
     parser.add_argument('-e', '--experiment', type=str, help='Type training', required=False, choices=CHOICE_TRAINING, default='hands_vs_feet')
     parser.add_argument('-d', '--directory-dataset', type=str, help='Directory dataset', required=False, default='../../files')
     parser.add_argument('-m', '--model', type=str, help=f'Model name.\nAvailables models: {MODEL_NAMES_STR}', required=False, default='lda')
-    parser.add_argument('-o', '--output', type=str, help='Output directory', required=False, default='./output/')
+    parser.add_argument('-o', '--output', type=str, help='Output directory', required=False, default='./output')
     parser.add_argument('-da', '--decomposition-algorithm', type=str, help=f'Decomposition algorithm.\nAvailable: {DECOMPOSITION_ALGORITHMS_NAMES_STR}', required=False, default='TurboCSP')
     parser.add_argument('-sv', '--save-model', action='store_true', help='Save model', default=False)
     parser.add_argument('-mb', '--mu-beta-process', action='store_true', help='Save model', default=False)
@@ -227,6 +230,6 @@ if __name__ == "__main__":
         print(f"Mean accuracy of {len(experiment)} experiments: {np.mean(m)}")
 
     if VERBOSE:
-        print(f"Result file saved in: ./{output}/results.json")
+        print(f"Result file saved in: {output}/results.json")
         with open(f"{output}results.json", 'w') as f:
             json.dump(results, f)

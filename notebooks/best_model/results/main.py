@@ -27,7 +27,7 @@ if __name__ == "__main__":
     sys.stdout = open('/dev/null', 'w')
     sys.stderr = open('/dev/null', 'w')
 
-    files = glob.glob('../../files/S001/*.edf')
+    files = glob.glob('../../../files/S001/*.edf')
     '''
     https://github.com/mne-tools/mne-python/blob/main/mne/datasets/eegbci/eegbci.py#L110
     =========  ===================================

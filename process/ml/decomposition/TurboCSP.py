@@ -1,7 +1,6 @@
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from scipy.linalg import eigh
-from sklearn.base import BaseEstimator, TransformerMixin
 
 class TurboCSP(BaseEstimator, TransformerMixin):
     def __init__(self, n_components):
