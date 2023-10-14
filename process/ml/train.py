@@ -108,8 +108,8 @@ def check_args(args):
     if not os.path.exists(dir_output) and dir_output != '':
         raise ValueError(f'Output directory path not valid: {output}')
     
-    if dir_output[-1] == '/':
-        dir_output = dir_output[:-1]
+    if output[-1] == '/':
+        output = output[:-1]
     
     return model_name, choosed_model, decomp_alg, choosed_decomp_alg, subject, experiment, output, save_model, directory_dataset, pack_subj, mu_beta_process, verbose
 
@@ -214,7 +214,7 @@ if __name__ == "__main__":
             pipeline = pipeline.fit(X, y)
             prefix = "model"
             prefix += f'_{e}.joblib' if pack_subj else f'_{e}_{subject[0]}.joblib'
-            path = output + prefix
+            path = output + '/' + prefix
             print(f"[+] Saving model in {path}")
             joblib.dump(pipeline, path)
 
