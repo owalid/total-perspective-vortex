@@ -161,7 +161,7 @@ if __name__ == "__main__":
     parser.add_argument('-e', '--experiment', type=str, help='Type training', required=False, choices=CHOICE_TRAINING, default='hands_vs_feet')
     parser.add_argument('-d', '--directory-dataset', type=str, help='Directory dataset', required=False, default='../../files')
     parser.add_argument('-m', '--model', type=str, help=f'Model name.\nAvailables models: {MODEL_NAMES_STR}', required=False, default='lda')
-    parser.add_argument('-o', '--output', type=str, help='Output directory', required=False, default='./output')
+    parser.add_argument('-o', '--output', type=str, help='Output directory', required=False, default='./output/')
     parser.add_argument('-da', '--decomposition-algorithm', type=str, help=f'Decomposition algorithm.\nAvailable: {DECOMPOSITION_ALGORITHMS_NAMES_STR}', required=False, default='TurboCSP')
     parser.add_argument('-sv', '--save-model', action='store_true', help='Save model', default=False)
     parser.add_argument('-mb', '--mu-beta-process', action='store_true', help='Save model', default=False)
@@ -231,5 +231,5 @@ if __name__ == "__main__":
 
     if VERBOSE:
         print(f"Result file saved in: {output}/results.json")
-        with open(f"{output}results.json", 'w') as f:
+        with open(f"{output}/results.json", 'w') as f:
             json.dump(results, f)
