@@ -133,7 +133,7 @@ if __name__ == "__main__":
 
         results = []
         for name, pipeline, param_grid in pipelines:
-            grid_search = GridSearchCV(pipeline, param_grid=param_grid, cv=shuffle_split, scoring='accuracy', n_jobs=-1)
+            grid_search = GridSearchCV(pipeline, param_grid=param_grid, cv=shuffle_split, scoring='accuracy', n_jobs=1)
             grid_search.fit(X, y)
             results.append((name, grid_search))
         
