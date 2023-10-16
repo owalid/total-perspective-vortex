@@ -16,7 +16,7 @@ This project aims to classify states from EEG data acquired from PhysioNet. The 
 
 ## Decomposition algorithm
 
-In this project, we utilize various decomposition algorithms to preprocess the EEG data and extract features for classification. Two prominent algorithms are employed:
+In this project, we use various decomposition algorithms to preprocess the EEG data and extract features for classification. Two prominent algorithms are employed:
 
 ### CSP (Common Spatial Patterns)
 
